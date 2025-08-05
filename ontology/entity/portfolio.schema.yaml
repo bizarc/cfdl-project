@@ -1,0 +1,66 @@
+$id: "https://cfdl.dev/ontology/entity/portfolio.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Portfolio"
+description: >
+  A collection of Deals grouped for aggregated analysis,
+  reporting, and governance. Portfolios can define portfolio-level
+  cash-flow streams (e.g., management fees), lifecycle states,
+  and metadata.
+type: object
+
+properties:
+  id:
+    type: string
+    format: uri
+    description: "Unique identifier for this portfolio."
+
+  name:
+    type: string
+    description: "Human-readable name of the portfolio."
+
+  description:
+    type: string
+    description: "Long-form notes or summary of the portfolio."
+
+  deals:
+    type: array
+    description: "The set of deals included in this portfolio."
+    items:
+      $ref: "https://cfdl.dev/ontology/entity/deal.schema.yaml"
+
+  streams:
+    type: array
+    description: "Portfolio-level cash-flow streams (e.g., portfolio fees)."
+    items:
+      $ref: "https://cfdl.dev/ontology/behavior/stream.schema.yaml"
+
+  stateConfig:
+    type: object
+    description: "Lifecycle states & transitions for the portfolio."
+    properties:
+      allowedStates:
+        type: array
+        items:
+          type: string
+        description: "Valid portfolio states (e.g., drafting, active, closed)."
+      initialState:
+        type: string
+        description: "Starting state when the portfolio is created."
+      transitionRules:
+        type: object
+        description: "Map from a state to its allowed next states."
+        additionalProperties:
+          type: array
+          items:
+            type: string
+    required: [allowedStates, initialState]
+
+  metadata:
+    type: object
+    description: "Free-form metadata (tags, UI hints, custom attributes)."
+    additionalProperties: true
+
+required:
+  - id
+  - name
+  - deals

@@ -1,0 +1,38 @@
+# ontology/result/metrics/payback.schema.yaml
+$id: "https://cfdl.dev/ontology/result/metrics/payback.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Payback Period"
+description: >
+  Schema for the Payback Period metric, defined as the number of periods
+  required to recover the initial investment from cumulative cash flows.
+type: object
+additionalProperties: false
+
+properties:
+  cashFlowSeriesId:
+    type: string
+    format: uri
+    description: "Reference to the cash‐flow series (cash‐flow.schema.yaml#entries)."
+
+  paybackPeriod:
+    type: number
+    description: "Number of periods until cumulative cash flows ≥ initial investment."
+
+  periodUnit:
+    type: string
+    description: "Unit of the payback period."
+    enum: [period, year]
+
+  paybackDate:
+    type: string
+    format: date
+    description: "Date when payback occurs (cumulative cash flows cross zero)."
+
+  metadata:
+    type: object
+    description: "Free-form metadata (e.g. interpolation method, notes)."
+    additionalProperties: true
+
+required:
+  - cashFlowSeriesId
+  - paybackPeriod

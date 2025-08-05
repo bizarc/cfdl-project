@@ -1,0 +1,95 @@
+$id: "https://cfdl.dev/ontology/entity/fund.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Fund"
+description: >
+  A collection vehicle that holds Portfolios (or Deals directly),
+  manages capital commitments, and applies fund-level streams
+  (e.g. management fees, carried interest). Funds have participants
+  (GPs, LPs), optional fundType, and lifecycle state.
+type: object
+
+properties:
+  id:
+    type: string
+    format: uri
+    description: "Unique identifier for this fund."
+
+  name:
+    type: string
+    description: "Human-readable name of the fund."
+
+  description:
+    type: string
+    description: "Long-form notes or summary of the fund."
+
+  fundType:
+    type: string
+    description: "High-level classification of the fund vehicle."
+    enum:
+      - closed_end
+      - open_end
+      - private_equity
+      - real_estate
+      - hedge
+      - venture_capital
+      - other
+
+  portfolios:
+    type: array
+    description: "Portfolios managed by this fund."
+    items:
+      $ref: "https://cfdl.dev/ontology/entity/portfolio.schema.yaml"
+
+  streams:
+    type: array
+    description: "Fund-level cash-flow streams (management fees, performance fees)."
+    items:
+      $ref: "https://cfdl.dev/ontology/behavior/stream.schema.yaml"
+
+  participants:
+    type: array
+    description: "Entities participating in the fund (e.g., GP, LP)."
+    items:
+      type: object
+      properties:
+        partyId:
+          type: string
+          format: uri
+          description: "Reference to party.schema.yaml."
+        role:
+          type: string
+          description: "Role in the fund."
+          enum: [general_partner, limited_partner, advisor, other]
+        commitment:
+          type: number
+          description: "Capital committed by the participant."
+      required: [partyId, role, commitment]
+
+  stateConfig:
+    type: object
+    description: "Lifecycle states & transitions for the fund."
+    properties:
+      allowedStates:
+        type: array
+        items: { type: string }
+        description: "Valid fund states (e.g. raising, active, closed)."
+      initialState:
+        type: string
+        description: "Starting state when the fund is created."
+      transitionRules:
+        type: object
+        additionalProperties:
+          type: array
+          items: { type: string }
+        description: "Map from each state → allowed next states."
+    required: [allowedStates, initialState]
+
+  metadata:
+    type: object
+    description: "Free-form metadata (tags, UI hints)."
+    additionalProperties: true
+
+required:
+  - id
+  - name
+  - stateConfig

@@ -1,0 +1,43 @@
+# ontology/result/metrics/enpv.schema.yaml
+$id: "https://cfdl.dev/ontology/result/metrics/enpv.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Expected Net Present Value (eNPV)"
+description: >
+  Schema for the expected NPV metric derived from stochastic (Monte Carlo)
+  analysis, representing the average NPV across simulations.
+type: object
+additionalProperties: false
+
+properties:
+  cashFlowSeriesId:
+    type: string
+    format: uri
+    description: "Reference to the base cash‐flow series template used in simulations."
+
+  discountRate:
+    type: number
+    description: "Per‐period discount rate (decimal)."
+
+  enpv:
+    type: number
+    description: "Expected (average) net present value across all simulation runs."
+
+  simulations:
+    type: integer
+    description: "Number of simulation iterations used to compute eNPV."
+
+  asOfDate:
+    type: string
+    format: date
+    description: "Date on which the eNPV calculation is anchored."
+
+  metadata:
+    type: object
+    description: "Free-form metadata (e.g. simulation seed, notes)."
+    additionalProperties: true
+
+required:
+  - cashFlowSeriesId
+  - discountRate
+  - enpv
+  - simulations

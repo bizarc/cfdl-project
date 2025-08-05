@@ -1,0 +1,48 @@
+# spec.yaml
+version: 1.0.0
+description: CFDL Core Specification
+
+profiles:
+  - credl
+
+includes:
+  # --- Ontology Schemas ---
+  # Entity Layer
+  - ontology/entity/deal.schema.yaml
+  - ontology/entity/asset.schema.yaml
+  - ontology/entity/component.schema.yaml
+  - ontology/entity/contract.schema.yaml
+  - ontology/entity/party.schema.yaml
+  - ontology/entity/portfolio.schema.yaml
+  - ontology/entity/fund.schema.yaml
+  - ontology/entity/capital-stack.schema.yaml
+  - ontology/entity/template.schema.yaml
+
+  # Behavior Layer
+  - ontology/behavior/assumption.schema.yaml
+  - ontology/behavior/logic-block.schema.yaml
+  - ontology/behavior/rule-block.schema.yaml
+
+  # Temporal Layer
+  - ontology/temporal/schedule.schema.yaml
+  - ontology/temporal/recurrence-rule.schema.yaml
+  - ontology/temporal/event-trigger.schema.yaml
+
+  # Result Layer
+  - ontology/result/cash-flow.schema.yaml
+  - ontology/result/waterfall.schema.yaml
+
+  # Metrics (Result sub-folder)
+  - ontology/result/metrics/irr.schema.yaml
+  - ontology/result/metrics/npv.schema.yaml
+  - ontology/result/metrics/dscr.schema.yaml
+  - ontology/result/metrics/payback.schema.yaml
+  - ontology/result/metrics/moic.schema.yaml
+  - ontology/result/metrics/enpv.schema.yaml
+
+  # Utilities
+  - ontology/behavior/calculators.schema.yaml
+  - ontology/behavior/market-data.schema.yaml
+
+grammar:
+  path: dsl/grammar/cfdl.g4

@@ -1,0 +1,133 @@
+# ontology/entity/deal.schema.yaml
+$id: "https://cfdl.dev/ontology/entity/deal.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Deal"
+description: >
+  Top-level container for a CFDL model. Captures entry/exit terms,
+  calendar rules, participants, assets, streams, and classification.
+type: object
+
+properties:
+  id:
+    type: string
+    format: uri
+    description: "Unique identifier for this deal."
+
+  name:
+    type: string
+    description: "Human-readable name of the deal."
+
+  description:
+    type: string
+    description: "Long-form notes about the deal."
+
+  dealType:
+    $ref: "https://cfdl.dev/ontology/common-types.schema.yaml#/definitions/dealType"
+    description: "Industry-focused classification of this deal."
+
+  currency:
+    $ref: "https://cfdl.dev/ontology/common-types.schema.yaml#/definitions/currencyCode"
+    description: "Currency for all monetary values."
+
+  entryDate:
+    type: string
+    format: date
+    description: "Effective start/acquisition date."
+
+  exitDate:
+    type: string
+    format: date
+    description: "Disposition or end date."
+
+  analysisStart:
+    type: string
+    format: date
+    description: "Date to begin cash-flow analysis."
+
+  holdingPeriodYears:
+    type: integer
+    minimum: 1
+    description: "Analysis horizon (in whole years)."
+
+  calendar:
+    type: object
+    description: "Time-series generation rules."
+    properties:
+      frequency:
+        $ref: "https://cfdl.dev/ontology/common-types.schema.yaml#/definitions/frequency"
+      businessDayConvention:
+        $ref: "https://cfdl.dev/ontology/common-types.schema.yaml#/definitions/businessDayConvention"
+      dayCount:
+        $ref: "https://cfdl.dev/ontology/common-types.schema.yaml#/definitions/dayCount"
+      holidayCalendar:
+        type: string
+        description: "Holiday calendar ID (e.g. 'US')."
+    required: [frequency, businessDayConvention, dayCount]
+
+  participants:
+    type: array
+    description: "Stakeholders in the deal (equity, sponsor, lender, etc.)."
+    items:
+      type: object
+      properties:
+        partyId:
+          type: string
+          format: uri
+          description: "Reference to party.schema.yaml."
+        role:
+          $ref: "https://cfdl.dev/ontology/common-types.schema.yaml#/definitions/partyRole"
+        amount:
+          type: number
+          description: "Capital commitment or exposure."
+      required: [partyId, role, amount]
+
+  capitalStackId:
+    type: string
+    format: uri
+    description: "Reference to capital-stack.schema.yaml."
+
+  assets:
+    type: array
+    description: "Assets under this deal."
+    items:
+      $ref: "https://cfdl.dev/ontology/entity/asset.schema.yaml"
+
+  streams:
+    type: array
+    description: "Deal-level cash-flow streams (fees, financing, one-time proceeds)."
+    items:
+      $ref: "https://cfdl.dev/ontology/behavior/stream.schema.yaml"
+
+  stateConfig:
+    type: object
+    description: "Lifecycle states & transitions for the deal."
+    properties:
+      allowedStates:
+        type: array
+        items: { type: string }
+        description: "Valid deal states."
+      initialState:
+        type: string
+        description: "Starting state."
+      transitionRules:
+        type: object
+        additionalProperties:
+          type: array
+          items: { type: string }
+        description: "State transition map."
+    required: [allowedStates, initialState]
+
+  metadata:
+    type: object
+    description: "Free-form metadata (tags, UI hints)."
+    additionalProperties: true
+
+required:
+  - id
+  - name
+  - entryDate
+  - exitDate
+  - analysisStart
+  - currency
+  - holdingPeriodYears
+  - dealType

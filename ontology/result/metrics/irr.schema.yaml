@@ -1,0 +1,37 @@
+# ontology/result/metrics/irr.schema.yaml
+$id: "https://cfdl.dev/ontology/result/metrics/irr.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Internal Rate of Return (IRR)"
+description: >
+  Schema for the Internal Rate of Return metric computed over a cash-flow series.
+  IRR is the rate that sets the net present value of the cash flows to zero.
+type: object
+additionalProperties: false
+
+properties:
+  cashFlowSeriesId:
+    type: string
+    format: uri
+    description: "Reference to the cash‐flow series (cash‐flow.schema.yaml#entries)."
+
+  irr:
+    type: number
+    description: "Computed internal rate of return (per period, decimal)."
+
+  annualized:
+    type: boolean
+    description: "True if the IRR has been annualized; false if period rate."
+
+  asOfDate:
+    type: string
+    format: date
+    description: "Date on which the IRR calculation is anchored."
+
+  metadata:
+    type: object
+    description: "Free-form metadata (e.g. calculation parameters, iteration count)."
+    additionalProperties: true
+
+required:
+  - cashFlowSeriesId
+  - irr

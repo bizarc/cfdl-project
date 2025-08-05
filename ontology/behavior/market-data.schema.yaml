@@ -1,0 +1,87 @@
+# ontology/behavior/market-data.schema.yaml
+$id: "https://cfdl.dev/ontology/behavior/market-data.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Market Data"
+description: >
+  Defines an external market‐data feed or reference index that can be 
+  used to populate assumptions, overwrite timeSeries values, or drive
+  dynamic input parameters in streams and logic blocks.
+type: object
+additionalProperties: false
+
+properties:
+  id:
+    type: string
+    format: uri
+    description: "Unique identifier for this market‐data definition."
+
+  name:
+    type: string
+    description: "Human‐readable name of the market‐data feed or index."
+
+  description:
+    type: string
+    description: "Long‐form description of the data source."
+
+  dataType:
+    type: string
+    description: "Type of data provided."
+    enum:
+      - interest_rate       # e.g. benchmark yields
+      - index_value         # e.g. market indices, price series
+      - fx_rate             # foreign exchange rates
+      - inflation_index     # CPI, PPI, etc.
+      - custom              # any other numeric series
+
+  symbol:
+    oneOf:
+      - type: string
+      - type: array
+        items:
+          type: string
+    description: >
+      Symbol(s) or key(s) identifying the specific data series
+      (e.g. 'USGG10YR' for the 10-year Treasury, 'SPX' for the S&P 500).
+
+  source:
+    type: object
+    description: "Connection details for the data source."
+    additionalProperties: false
+    properties:
+      type:
+        type: string
+        enum: [api, database, file, service]
+        description: "Mechanism to retrieve the data."
+      endpoint:
+        type: string
+        description: "URL, connection string, or filepath for retrieval."
+      credentialsRef:
+        type: string
+        format: uri
+        description: "Reference to stored credentials (e.g. secrets manager URI)."
+      parameters:
+        type: object
+        description: "Additional key/value parameters for API calls or queries."
+        additionalProperties: true
+    required: [type, endpoint]
+
+  refreshSchedule:
+    $ref: "https://cfdl.dev/ontology/temporal/schedule.schema.yaml"
+    description: >
+      Schedule defining how often to pull or refresh the data (e.g. daily at 6am).
+
+  field:
+    type: string
+    description: "Specific field or column to extract from the data (e.g. 'close', 'rate')."
+
+  metadata:
+    type: object
+    description: "Free‐form metadata (tags, UI hints, caching policies)."
+    additionalProperties: true
+
+required:
+  - id
+  - name
+  - dataType
+  - symbol
+  - source

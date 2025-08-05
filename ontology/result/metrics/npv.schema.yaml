@@ -1,0 +1,38 @@
+# ontology/result/metrics/npv.schema.yaml
+$id: "https://cfdl.dev/ontology/result/metrics/npv.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Net Present Value (NPV)"
+description: >
+  Schema for the Net Present Value metric computed over a cash-flow series.
+  NPV is the sum of each period’s cash flow discounted by the discount rate.
+type: object
+additionalProperties: false
+
+properties:
+  cashFlowSeriesId:
+    type: string
+    format: uri
+    description: "Reference to the cash‐flow series (cash‐flow.schema.yaml#entries)."
+
+  discountRate:
+    type: number
+    description: "Per‐period discount rate (decimal, e.g. 0.08 for 8%)."
+
+  npv:
+    type: number
+    description: "Computed net present value of the cash‐flow series."
+
+  asOfDate:
+    type: string
+    format: date
+    description: "Date on which the NPV calculation is anchored."
+
+  metadata:
+    type: object
+    description: "Free-form metadata (e.g. calculation parameters, notes)."
+    additionalProperties: true
+
+required:
+  - cashFlowSeriesId
+  - discountRate
+  - npv

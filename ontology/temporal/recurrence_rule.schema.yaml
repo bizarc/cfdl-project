@@ -1,0 +1,69 @@
+# ontology/temporal/recurrence-rule.schema.yaml
+$id: "https://cfdl.dev/ontology/temporal/recurrence-rule.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Recurrence Rule"
+description: >
+  Defines recurrence details for a recurring schedule, following RFC‐5545 semantics.
+  Use in conjunction with a Schedule (recurrenceRule).
+type: object
+
+properties:
+  freq:
+    type: string
+    description: "Recurrence frequency."
+    enum: [DAILY, WEEKLY, MONTHLY, YEARLY]
+
+  interval:
+    type: integer
+    description: "Interval between recurrences (e.g. every 2 weeks)."
+    minimum: 1
+    default: 1
+
+  byDay:
+    type: array
+    description: >
+      Specifies days of the week on which to recur.
+      Use two-letter abbreviations: MO, TU, WE, TH, FR, SA, SU.
+    items:
+      type: string
+      pattern: "^(MO|TU|WE|TH|FR|SA|SU)$"
+
+  byMonth:
+    type: array
+    description: "Specifies months of the year (1 = January … 12 = December)."
+    items:
+      type: integer
+      minimum: 1
+      maximum: 12
+
+  byMonthDay:
+    type: array
+    description: >
+      Specifies days of the month (1–31 or negative for counting from end,
+      e.g. -1 = last day of month).
+    items:
+      type: integer
+      minimum: -31
+      maximum: 31
+
+  count:
+    type: integer
+    description: "Total number of occurrences to generate (exclusive with `until`)."
+    minimum: 1
+
+  until:
+    type: string
+    format: date-time
+    description: >
+      End date/time of the recurrence (exclusive). Must be after the schedule’s startDate.
+  
+  wkst:
+    type: string
+    description: "Week start day, used when `freq` = WEEKLY (default SU)."
+    enum: [MO, TU, WE, TH, FR, SA, SU]
+    default: SU
+
+required:
+  - freq
+
+additionalProperties: false

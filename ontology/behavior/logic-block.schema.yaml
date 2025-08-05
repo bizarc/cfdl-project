@@ -1,0 +1,76 @@
+$id: "https://cfdl.dev/ontology/behavior/logic-block.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Logic Block"
+description: >
+  Encapsulates a custom calculation, validation, trigger, or data-generation
+  step during model execution.
+type: object
+
+properties:
+  id:
+    type: string
+    format: uri
+    description: "Unique identifier for this logic block."
+
+  name:
+    type: string
+    description: "Human-readable name of the logic block."
+
+  description:
+    type: string
+    description: "Detailed explanation of the block’s purpose or algorithm."
+
+  scope:
+    type: string
+    description: "Hierarchy level where this block runs."
+    enum: [component, asset, deal, portfolio, fund]
+
+  type:
+    $ref: "https://cfdl.dev/ontology/common-types.schema.yaml#/definitions/logicBlockType"
+    description: "Function category of this block (calculation, trigger, etc.)."
+
+  inputs:
+    type: array
+    description: >
+      Optional list of input IDs this block consumes
+      (streams, assumptions, or other blocks).
+    items:
+      type: string
+      format: uri
+
+  outputs:
+    type: array
+    description: >
+      Optional list of output IDs produced by this block
+      (new streams or variables).
+    items:
+      type: string
+      format: uri
+
+  executionOrder:
+    type: integer
+    description: >
+      Optional ordering index among peer blocks at the same scope
+      (lower numbers run earlier).
+
+  code:
+    type: string
+    description: >
+      The code snippet implementing the logic block. It should reference
+      inputs and assign to outputs or perform its side effect.
+
+  language:
+    type: string
+    description: "Language of the code snippet (e.g. 'julia', 'python')."
+
+  metadata:
+    type: object
+    description: "Free-form metadata for UI hints, versioning, or tags."
+    additionalProperties: true
+
+required:
+  - id
+  - name
+  - scope
+  - type
+  - code

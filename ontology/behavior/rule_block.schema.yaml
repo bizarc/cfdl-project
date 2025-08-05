@@ -1,0 +1,68 @@
+# ontology/behavior/rule-block.schema.yaml
+$id: "https://cfdl.dev/ontology/behavior/rule-block.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Rule Block"
+description: >
+  Defines a conditional or event-driven operation that fires during model execution.
+  A Rule Block can be triggered by a schedule, an external event, or an evaluated condition,
+  and executes one or more actions (e.g., assigning values, logging, or invoking external services).
+type: object
+
+properties:
+  id:
+    type: string
+    format: uri
+    description: "Unique identifier for this rule block."
+
+  name:
+    type: string
+    description: "Human-readable name of the rule block."
+
+  description:
+    type: string
+    description: "Detailed explanation of the rule’s purpose or logic."
+
+  scope:
+    type: string
+    description: "Hierarchy level where this rule runs."
+    enum: [component, asset, deal, portfolio, fund]
+
+  schedule:
+    $ref: "https://cfdl.dev/ontology/temporal/schedule.schema.yaml"
+    description: "Optional schedule that triggers the rule periodically."
+
+  eventTrigger:
+    $ref: "https://cfdl.dev/ontology/temporal/event-trigger.schema.yaml"
+    description: "Optional event definition that triggers the rule when an event occurs."
+
+  condition:
+    type: string
+    description: >
+      Optional boolean expression; when it evaluates to true (at or after
+      the scheduled time or event), the action(s) execute.
+
+  action:
+    oneOf:
+      - type: string
+      - type: array
+        items:
+          type: string
+    description: >
+      Code snippet or list of statements to execute when the rule fires.
+      Can reference model variables, streams, or external functions.
+
+  metadata:
+    type: object
+    description: "Free-form metadata for UI hints, tagging, or versioning."
+    additionalProperties: true
+
+required:
+  - id
+  - name
+  - level
+  - action
+
+anyOf:
+  - required: ["schedule"]
+  - required: ["eventTrigger"]
+  - required: ["condition"]

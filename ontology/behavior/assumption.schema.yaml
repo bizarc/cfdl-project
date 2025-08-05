@@ -1,0 +1,100 @@
+$id: "https://cfdl.dev/ontology/behavior/assumption.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Assumption"
+description: "Represents an economic or operational input used in modeling, such as growth rates, default probabilities, or cost escalators."
+type: object
+
+properties:
+  id:
+    type: string
+    description: "Unique identifier for the assumption within its scope."
+
+  name:
+    type: string
+    description: "Optional human-readable name for clarity in reports and user interfaces."
+
+  category:
+    type: string
+    description: "Logical grouping used for organizing assumptions in reports, sensitivity analysis, and user interfaces."
+    enum: [revenue, expense, capital, leasing, timing, financing, other] :contentReference[oaicite:14]{index=14}
+
+  scope:
+    type: string
+    description: "Level in the CFDL hierarchy where this assumption is defined and applies."
+    enum: [component, asset, deal, portfolio, fund] :contentReference[oaicite:15]{index=15}
+
+  type:
+    type: string
+    description: "Method by which the value is defined and how it should be evaluated."
+    enum: [fixed, distribution, table, expression] :contentReference[oaicite:16]{index=16}
+
+  value:
+    description: "Base value for fixed, table, or expression type assumptions."
+    oneOf:
+      - type: number
+      - type: string
+      - type: object :contentReference[oaicite:17]{index=17}
+
+  distribution:
+    type: object
+    description: "Statistical distribution specification for stochastic modeling."
+    properties:
+      type:
+        type: string
+        enum: [normal, uniform, triangular, lognormal, beta, custom]
+        description: "Type of probability distribution to use for sampling values." :contentReference[oaicite:18]{index=18}
+      parameters:
+        type: object
+        description: "Distribution-specific parameters that define the shape and characteristics of the distribution."
+        additionalProperties: true
+    required: [type, parameters]
+
+  timeSeries:
+    type: array
+    description: "Optional overrides that apply at specific times, regardless of assumption type."
+    items:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: "The date when this override takes effect."  
+        value:
+          description: "The override value that applies on or after the given date."
+          oneOf:
+            - type: number
+            - type: string
+            - type: object
+      required: [date, value] :contentReference[oaicite:19]{index=19}
+
+  unit:
+    type: string
+    description: "Optional unit specification (e.g. '%', 'bps', '$/sf')." :contentReference[oaicite:20]{index=20}
+
+  template:
+    type: string
+    description: "Optional reference to a reusable assumption template." :contentReference[oaicite:21]{index=21}
+
+  overrides:
+    type: object
+    description: "Field-level overrides when using a referenced template, allowing customization."  
+    additionalProperties: true :contentReference[oaicite:22]{index=22}
+
+  source:
+    type: string
+    description: "Optional reference to the data source or authority for the assumption value." :contentReference[oaicite:23]{index=23}
+
+  marketDataRef:
+    type: string
+    description: "Optional reference to a market data entity for dynamic updates." :contentReference[oaicite:24]{index=24}
+
+  metadata:
+    type: object
+    description: "Free-form metadata (tags, UI hints)."
+    additionalProperties: true
+
+required:
+  - id
+  - category
+  - scope
+  - type

@@ -1,0 +1,33 @@
+# ontology/result/metrics/moic.schema.yaml
+$id: "https://cfdl.dev/ontology/result/metrics/moic.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Multiple on Invested Capital (MOIC)"
+description: >
+  Schema for the MOIC metric, defined as the ratio of total cash receipts
+  to total capital invested.
+type: object
+additionalProperties: false
+
+properties:
+  cashFlowSeriesId:
+    type: string
+    format: uri
+    description: "Reference to the equity cash‐flow series (post-investment)."
+
+  moic:
+    type: number
+    description: "Computed multiple on invested capital (total distributions ÷ invested capital)."
+
+  asOfDate:
+    type: string
+    format: date
+    description: "Date on which the MOIC calculation is anchored."
+
+  metadata:
+    type: object
+    description: "Free-form metadata (e.g. notes, calculation basis)."
+    additionalProperties: true
+
+required:
+  - cashFlowSeriesId
+  - moic

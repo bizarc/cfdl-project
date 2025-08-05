@@ -1,0 +1,75 @@
+$id: "https://cfdl.dev/ontology/entity/component.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Component"
+description: >
+  Represents a cash‐flow‐producing sub‐unit of an Asset (e.g., a tenant suite,
+  a revenue‐generating machine). Components have cash‐flow streams and
+  lifecycle states, while non‐revenue characteristics live in `attributes`.
+type: object
+
+properties:
+  id:
+    type: string
+    format: uri
+    description: "Unique identifier for this component."
+
+  name:
+    type: string
+    description: "Human-readable name of the component."
+
+  description:
+    type: string
+    description: "Long-form notes about the component."
+
+  assetId:
+    type: string
+    format: uri
+    description: "Reference to the parent Asset (asset.schema.yaml)."
+
+  componentType:
+    type: string
+    description: "Classification (e.g., 'unit', 'machine', 'tenant-space')."
+
+  attributes:
+    type: object
+    description: >
+      Structured properties for non‐cash‐flow characteristics
+      (e.g., building identifier, floor number, square footage).
+    additionalProperties: true
+
+  streams:
+    type: array
+    description: "Cash‐flow streams defined at the component level."
+    items:
+      $ref: "https://cfdl.dev/ontology/behavior/stream.schema.yaml"
+
+  stateConfig:
+    type: object
+    description: "Lifecycle states & transitions for the component."
+    properties:
+      allowedStates:
+        type: array
+        description: "Valid life‐cycle states for this component."
+        items:
+          type: string
+      initialState:
+        type: string
+        description: "Starting state when the component is created."
+      transitionRules:
+        type: object
+        description: "Map from a state to its allowed next states."
+        additionalProperties:
+          type: array
+          items:
+            type: string
+    required: [allowedStates, initialState]
+
+  metadata:
+    type: object
+    description: "Free‐form metadata (tags, UI hints, custom attributes)."
+    additionalProperties: true
+
+required:
+  - id
+  - name
+  - assetId

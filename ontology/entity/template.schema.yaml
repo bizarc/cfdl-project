@@ -1,0 +1,78 @@
+$id: "https://cfdl.dev/ontology/entity/template.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Template"
+description: >
+  Defines a reusable CFDL template (DSL snippet) with named parameters
+  for instantiating common constructs (e.g., standard leases, loans, waterfalls).
+type: object
+
+properties:
+  id:
+    type: string
+    format: uri
+    description: "Unique identifier for this template."
+
+  name:
+    type: string
+    description: "Human-readable name of the template."
+
+  description:
+    type: string
+    description: "Long-form description of what this template generates."
+
+  templateType:
+    type: string
+    description: "The DSL construct this template applies to."
+    enum:
+      - deal
+      - asset
+      - component
+      - stream
+      - logic-block
+      - rule-block
+      - assumption
+      - view
+      - scenario
+      - contract
+      - waterfall
+
+  parameters:
+    type: array
+    description: "Parameters required by this template; referenced in the DSL body."
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Parameter name as used in the template body (e.g. '{{leaseTerm}}')."
+        dataType:
+          type: string
+          description: "Expected data type for this parameter."
+          enum: [string, number, date, boolean, enum]
+        description:
+          type: string
+          description: "Explanation of the parameter’s purpose."
+        required:
+          type: boolean
+          description: "Whether this parameter must be supplied."
+        defaultValue:
+          description: "Default value if none is provided."
+      required: [name, dataType]
+
+  body:
+    type: string
+    description: >
+      The CFDL code snippet, using parameter placeholders (e.g. {{paramName}}).
+      Should compile to valid CFDL when parameters are substituted.
+
+  metadata:
+    type: object
+    description: "Free-form metadata (tags, UI hints, versioning)."
+    additionalProperties: true
+
+required:
+  - id
+  - name
+  - templateType
+  - parameters
+  - body

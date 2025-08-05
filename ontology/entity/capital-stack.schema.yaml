@@ -1,0 +1,47 @@
+$id: "https://cfdl.dev/ontology/entity/capital-stack.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Capital Stack"
+description: >
+  Defines who contributed capital to a deal and how available cash
+  is distributed back via waterfall rules.  Contributions (participants)
+  are separate from distribution logic (waterfall).
+type: object
+
+properties:
+  id:
+    type: string
+    format: uri
+    description: "Unique identifier for this capital stack instance."
+
+  # Who put money in
+  participants:
+    type: array
+    description: "Entities contributing capital to the deal."
+    items:
+      type: object
+      properties:
+        partyId:
+          type: string
+          format: uri
+          description: "Reference to a Party (party.schema.yaml)."
+        amount:
+          type: number
+          description: "Capital committed by this party."
+      required: [partyId, amount]
+
+  # How money flows out
+  waterfall:
+    $ref: "https://cfdl.dev/ontology/result/waterfall.schema.yaml"
+    description: >
+      Ordered distribution rules: tiers defining who gets paid
+      and in what priority/split as cash becomes available.
+
+  metadata:
+    type: object
+    description: "Free-form metadata (tags, UI hints, custom properties)."
+    additionalProperties: true
+
+required:
+  - id
+  - participants
+  - waterfall

@@ -1,0 +1,62 @@
+$id: "https://cfdl.dev/ontology/temporal/schedule.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Schedule"
+description: >
+  Defines when and how often an event, stream, or rule fires.
+  Supports one-time, recurring, and date-bounded recurrence patterns.
+type: object
+
+properties:
+  type:
+    type: string
+    description: "Kind of schedule."
+    enum: [oneTime, recurring, dateBounded]
+
+  # One-time event date
+  date:
+    type: string
+    format: date
+    description: "Single date for a oneTime schedule."
+  
+  # Recurrence rule (RFC-5545 style)
+  recurrenceRule:
+    $ref: "https://cfdl.dev/ontology/temporal/recurrence-rule.schema.yaml"
+    description: "Recurrence definition for recurring schedules."
+
+  # Optional date range for recurrence
+  startDate:
+    type: string
+    format: date
+    description: "Inclusive start date for dateBounded or recurring schedules."
+  endDate:
+    type: string
+    format: date
+    description: "Inclusive end date for dateBounded schedules."
+
+  # Optional override of calendar frequency
+  frequency:
+    $ref: "https://cfdl.dev/ontology/common-types.schema.yaml#/definitions/frequency"
+    description: "If present, overrides the default run frequency for this schedule."
+
+  # Limit by number of occurrences instead of endDate
+  count:
+    type: integer
+    minimum: 1
+    description: "Total number of occurrences to generate (exclusive with endDate)."
+
+required:
+  - type
+
+allOf:
+  - if:
+      properties: { type: { const: "oneTime" } }
+    then:
+      required: ["date"]
+  - if:
+      properties: { type: { enum: ["recurring", "dateBounded"] } }
+    then:
+      required: ["recurrenceRule", "startDate"]
+  - if:
+      properties: { type: { const: "dateBounded" } }
+    then:
+      required: ["endDate"]

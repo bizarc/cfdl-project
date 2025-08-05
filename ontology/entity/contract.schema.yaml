@@ -1,0 +1,119 @@
+$id: "https://cfdl.dev/ontology/entity/contract.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Contract"
+description: >
+  Legal or financial agreement tied to a Deal, Asset, or Component
+  (e.g., lease, PPA, service agreement). Contracts carry their own
+  payment streams, parties, and lifecycle states.
+type: object
+
+properties:
+  id:
+    type: string
+    format: uri
+    description: "Unique identifier for this contract instance."
+
+  name:
+    type: string
+    description: "Human-readable name of the contract."
+
+  description:
+    type: string
+    description: "Long-form notes or summary of the contract."
+
+  dealId:
+    type: string
+    format: uri
+    description: "Reference to the parent Deal (deal.schema.yaml)."
+
+  assetId:
+    type: string
+    format: uri
+    description: "Optional reference to an Asset this contract pertains to."
+
+  componentId:
+    type: string
+    format: uri
+    description: "Optional reference to a Component this contract pertains to."
+
+  contractType:
+    type: string
+    description: "Classification of the contract."
+    enum:
+      - lease
+      - power-purchase-agreement
+      - loan-agreement
+      - service-agreement
+      - royalty-agreement
+      - management-agreement
+      - sale-leaseback
+      - other
+
+  parties:
+    type: array
+    description: "Roles and references to all parties in this contract."
+    items:
+      type: object
+      properties:
+        partyId:
+          type: string
+          format: uri
+          description: "Reference to a Party (party.schema.yaml)."
+        role:
+          $ref: "https://cfdl.dev/ontology/common-types.schema.yaml#/definitions/partyRole"
+          description: "Role of the party in the contract (e.g., lessor, lessee)."
+      required: [partyId, role]
+
+  startDate:
+    type: string
+    format: date
+    description: "Contract effective date."
+
+  endDate:
+    type: string
+    format: date
+    description: "Contract termination or expiration date."
+
+  terms:
+    type: object
+    description: "Key-value map of additional contract terms (e.g., rentEscalation, feeRates)."
+    additionalProperties: true
+
+  streams:
+    type: array
+    description: "Cash-flow streams defined by this contract (e.g., rent payments)."
+    items:
+      $ref: "https://cfdl.dev/ontology/behavior/stream.schema.yaml"
+
+  stateConfig:
+    type: object
+    description: "Lifecycle states & transitions for the contract."
+    properties:
+      allowedStates:
+        type: array
+        items: { type: string }
+        description: "Valid contract states (e.g., pending, active, terminated)."
+      initialState:
+        type: string
+        description: "Starting state when the contract is created."
+      transitionRules:
+        type: object
+        additionalProperties:
+          type: array
+          items: { type: string }
+        description: "Map from a state to allowed next states."
+    required: [allowedStates, initialState]
+
+  metadata:
+    type: object
+    description: "Free-form metadata (tags, UI hints)."
+    additionalProperties: true
+
+required:
+  - id
+  - name
+  - dealId
+  - contractType
+  - parties
+  - startDate
+  - endDate

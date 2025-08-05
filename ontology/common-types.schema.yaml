@@ -1,0 +1,82 @@
+$id: "https://cfdl.dev/ontology/common-types.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "CFDL Common Types"
+description: "Shared enums and simple types used across CFDL schemas."
+type: object
+
+definitions:
+  assetCategory:
+    type: string
+    description: "Primary category of the cash-flowing asset."
+    enum:
+      - real_estate
+      - financial_asset
+      - physical_asset
+      - legal_right
+      - operating_entity
+      - contract_bundle
+      - mixed
+      - other
+
+  dealType:
+    type: string
+    description: "Primary classification of the deal, by cash-flow business model."
+    enum:
+      - commercial_real_estate
+      - residential_real_estate
+      - financial_instrument
+      - syndicated_loan
+      - private_credit
+      - litigation_finance
+      - royalty_stream
+      - infrastructure_project
+      - renewable_energy_project
+      - equipment_leasing
+      - art_and_collectibles
+      - business_acquisition
+      - other
+
+  currencyCode:
+    type: string
+    description: "ISO-4217 3-letter currency code."
+    pattern: "^[A-Z]{3}$"
+
+  frequency:
+    type: string
+    enum: [daily, weekly, monthly, quarterly, annual]
+
+  businessDayConvention:
+    type: string
+    enum: [following, modified_following, preceding]
+
+  dayCount:
+    type: string
+    enum: [actual/360, actual/365, 30/360, actual/actual]
+
+  partyRole:
+    type: string
+    description: "Role of a counterparty in a deal."
+    enum: [sponsor, equity, lender, operator, guarantor, other]
+
+  logicBlockType:
+    type: string
+    description: "Classification of a logic block by its functional role."
+    enum:
+      - calculation
+      - aggregation
+      - validation
+      - trigger
+      - generator
+      - custom
+
+metadata:
+    type: object
+    description: "Free-form metadata for UI hints, versioning, or tags."
+    additionalProperties: true
+
+required:
+  - id
+  - name
+  - scope
+  - type
+  - code

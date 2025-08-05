@@ -1,0 +1,67 @@
+# ontology/temporal/event-trigger.schema.yaml
+$id: "https://cfdl.dev/ontology/temporal/event-trigger.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Event Trigger"
+description: >
+  Defines an event-based trigger for rule blocks or logic blocks.
+  Supports assumption changes, value threshold crossings, external events, or custom expressions.
+type: object
+
+properties:
+  type:
+    type: string
+    description: "Type of event trigger."
+    enum:
+      - assumption_change     # Fires when a specified assumption’s value changes
+      - stream_threshold      # Fires when a stream’s value crosses a threshold
+      - external_event        # Fires on receipt of an external event
+      - custom                # Fires based on a custom boolean expression
+  
+  assumptionId:
+    type: string
+    format: uri
+    description: "Identifier of the assumption to monitor (for assumption_change)."
+  
+  streamId:
+    type: string
+    format: uri
+    description: "Identifier of the stream to monitor (for stream_threshold)."
+
+  operator:
+    type: string
+    description: "Comparison operator for threshold triggers."
+    enum: [eq, ne, lt, lte, gt, gte]
+  
+  threshold:
+    type: number
+    description: "Numeric threshold value to compare (for stream_threshold)."
+  
+  externalEventName:
+    type: string
+    description: "Name or identifier of the external event to listen for (for external_event)."
+
+  expression:
+    type: string
+    description: "Custom boolean expression to evaluate (for custom triggers)."
+
+  metadata:
+    type: object
+    description: "Free-form metadata for UI hints, logging, or integration."
+    additionalProperties: true
+
+required:
+  - type
+
+oneOf:
+  - properties:
+      type: { const: "assumption_change" }
+    required: [assumptionId]
+  - properties:
+      type: { const: "stream_threshold" }
+    required: [streamId, operator, threshold]
+  - properties:
+      type: { const: "external_event" }
+    required: [externalEventName]
+  - properties:
+      type: { const: "custom" }
+    required: [expression]

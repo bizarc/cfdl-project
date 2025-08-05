@@ -1,0 +1,42 @@
+# ontology/result/metrics/eirr.schema.yaml
+$id: "https://cfdl.dev/ontology/result/metrics/eirr.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Expected Internal Rate of Return (eIRR)"
+description: >
+  Schema for the expected IRR metric derived from stochastic (Monte Carlo)
+  analysis, representing the average IRR across simulations.
+type: object
+additionalProperties: false
+
+properties:
+  cashFlowSeriesId:
+    type: string
+    format: uri
+    description: "Reference to the base cash‐flow series template used in simulations."
+
+  eirr:
+    type: number
+    description: "Expected (average) internal rate of return per period (decimal)."
+
+  annualized:
+    type: boolean
+    description: "True if the eIRR has been annualized; false if per‐period rate."
+
+  simulations:
+    type: integer
+    description: "Number of simulation iterations used to compute eIRR."
+
+  asOfDate:
+    type: string
+    format: date
+    description: "Date on which the eIRR calculation is anchored."
+
+  metadata:
+    type: object
+    description: "Free-form metadata (e.g. simulation seed, notes)."
+    additionalProperties: true
+
+required:
+  - cashFlowSeriesId
+  - eirr
+  - simulations

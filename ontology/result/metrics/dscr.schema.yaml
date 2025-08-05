@@ -1,0 +1,39 @@
+# ontology/result/metrics/dscr.schema.yaml
+$id: "https://cfdl.dev/ontology/result/metrics/dscr.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Debt Service Coverage Ratio (DSCR)"
+description: >
+  Schema for the Debt Service Coverage Ratio metric, defined as the ratio
+  of net operating income to debt service for a cash‐flow series.
+type: object
+additionalProperties: false
+
+properties:
+  cashFlowSeriesId:
+    type: string
+    format: uri
+    description: "Reference to the cash‐flow series (cash‐flow.schema.yaml#entries)."
+
+  debtServiceSeriesId:
+    type: string
+    format: uri
+    description: "Reference to the debt‐service cash‐flow series."
+
+  dscr:
+    type: number
+    description: "Computed Debt Service Coverage Ratio (NOI ÷ Debt Service)."
+
+  asOfDate:
+    type: string
+    format: date
+    description: "Date on which the DSCR calculation is anchored."
+
+  metadata:
+    type: object
+    description: "Free-form metadata (e.g. calculation parameters, notes)."
+    additionalProperties: true
+
+required:
+  - cashFlowSeriesId
+  - debtServiceSeriesId
+  - dscr

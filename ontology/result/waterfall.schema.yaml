@@ -1,0 +1,110 @@
+# ontology/result/waterfall.schema.yaml
+$id: "https://cfdl.dev/ontology/result/waterfall.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Waterfall"
+description: >
+  Defines an ordered, tiered distribution of available cash. Cash-in contributions
+  (participants) are defined in the capital‐stack; each tier here governs how cash‐out
+  is allocated, via explicit splits or by inheriting participant proportions.
+type: object
+additionalProperties: false
+
+properties:
+  id:
+    type: string
+    format: uri
+    description: "Unique identifier for this waterfall definition."
+
+  description:
+    type: string
+    description: "Long-form description of the overall waterfall logic."
+
+  tiers:
+    type: array
+    description: >
+      Ordered list of distribution tiers.  Each tier must have an `id`, 
+      and either a `condition`, an `until`, or a `prefRate`.  The engine
+      processes tiers in sequence, evaluating their trigger and then 
+      allocating cash according to `distribute`.
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          description: "Unique identifier for this tier."
+        description:
+          type: string
+          description: "Human-readable explanation of this tier."
+        condition:
+          type: string
+          description: >
+            Boolean or arithmetic expression evaluated against the current
+            deal state or metrics (e.g. “remainingCapital > 0”).
+        until:
+          type: string
+          description: >
+            Shorthand boolean expression; equivalent to a `condition`,
+            typically used for “until X is met” logic.
+        prefRate:
+          type: number
+          minimum: 0
+          description: >
+            Shorthand for a preferred return rate (e.g. 0.08 for 8%).  
+            Internally treated as `condition: IRR >= prefRate`.
+        distribute:
+          type: array
+          description: >
+            List of distribution instructions.  Either specify explicit
+            `recipient` + `percentage` splits (percentages summing to 1.0)
+            or set `fromCapitalStack: true` + `layerName` to inherit 
+            participant proportions from the capital-stack.
+          minItems: 1
+          items:
+            oneOf:
+              - type: object
+                additionalProperties: false
+                properties:
+                  recipient:
+                    oneOf:
+                      - type: string
+                        format: uri
+                        description: "Party URI to receive cash."
+                      - type: string
+                        description: "Named group (e.g. 'equity', 'senior_debt')."
+                      - type: integer
+                        description: "Index into capitalStack participants array."
+                  percentage:
+                    type: number
+                    minimum: 0
+                    maximum: 1
+                    description: "Fraction of this tier’s cash for the recipient."
+                required: [recipient, percentage]
+              - type: object
+                additionalProperties: false
+                properties:
+                  fromCapitalStack:
+                    type: boolean
+                    const: true
+                    description: >
+                      If true, ignore explicit splits and distribute pro-rata
+                      among participants in the specified layer.
+                  layerName:
+                    type: string
+                    description: "Name of the capital-stack layer to use."
+                required: [fromCapitalStack, layerName]
+      required: [id, distribute]
+      anyOf:
+        - required: ["condition"]
+        - required: ["until"]
+        - required: ["prefRate"]
+
+  metadata:
+    type: object
+    description: "Free-form metadata (tags, UI hints, custom properties)."
+    additionalProperties: true
+
+required:
+  - id
+  - tiers

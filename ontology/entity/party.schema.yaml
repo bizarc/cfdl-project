@@ -1,0 +1,70 @@
+# ontology/entity/party.schema.yaml
+$id: "https://cfdl.dev/ontology/entity/party.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Party"
+description: >
+  Represents a person or organization that participates in deals,
+  contracts, or other financial/legal arrangements.
+type: object
+
+properties:
+  id:
+    type: string
+    format: uri
+    description: "Unique identifier for this party."
+
+  name:
+    type: string
+    description: "Legal name of the person or organization."
+
+  partyType:
+    type: string
+    description: "Classification of this party."
+    enum:
+      - individual
+      - organization
+      - government
+      - trust
+      - fund
+      - other
+
+  description:
+    type: string
+    description: "Long-form notes or background on the party."
+
+  contactInfo:
+    type: object
+    description: "Contact details for this party."
+    properties:
+      email:
+        type: string
+        format: email
+      phone:
+        type: string
+        description: "E.164-formatted phone number."
+      address:
+        type: object
+        description: "Structured postal address."
+        properties:
+          streetAddress:
+            type: string
+          city:
+            type: string
+          state:
+            type: string
+          postalCode:
+            type: string
+          country:
+            type: string
+        required: [streetAddress, city, country]
+    additionalProperties: false
+
+  metadata:
+    type: object
+    description: "Free-form metadata (tags, UI hints, integration keys)."
+    additionalProperties: true
+
+required:
+  - id
+  - name
+  - partyType

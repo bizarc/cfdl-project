@@ -1,0 +1,104 @@
+# ontology/result/cash-flow.schema.yaml
+$id: "https://cfdl.dev/ontology/result/cash-flow.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Cash Flow"
+description: >
+  Represents the aggregated periodic cash-flow results for a Deal,
+  including all line-item breakdowns, unlevered and levered series,
+  and the view tags applied.
+type: object
+additionalProperties: false
+
+properties:
+  dealId:
+    type: string
+    format: uri
+    description: "Reference to the Deal these cash flows belong to."
+
+  currency:
+    $ref: "https://cfdl.dev/ontology/common-types.schema.yaml#/definitions/currencyCode"
+    description: "Currency code for all amounts."
+
+  frequency:
+    $ref: "https://cfdl.dev/ontology/common-types.schema.yaml#/definitions/frequency"
+    description: "Time‐series frequency used (e.g. monthly)."
+
+  entries:
+    type: array
+    description: "Ordered list of period‐level cash‐flow entries."
+    items:
+      $ref: "#/definitions/cashFlowEntry"
+    minItems: 1
+
+  tagsApplied:
+    type: array
+    description: "Presentation tags used for this series (e.g. [GAAP, Forecast])."
+    items:
+      type: string
+
+  metadata:
+    type: object
+    description: "Free‐form metadata (UI hints, versioning)."
+    additionalProperties: true
+
+required:
+  - dealId
+  - frequency
+  - entries
+
+definitions:
+  cashFlowEntry:
+    type: object
+    description: "Cash‐flow details for a single period."
+    additionalProperties: false
+    properties:
+      periodStart:
+        type: string
+        format: date
+        description: "Inclusive start date of the period."
+      periodEnd:
+        type: string
+        format: date
+        description: "Inclusive end date of the period."
+      lineItems:
+        type: array
+        description: "All stream‐level cash flows allocated to this period."
+        items:
+          type: object
+          additionalProperties: false
+          properties:
+            streamId:
+              type: string
+              format: uri
+              description: "Reference to the source stream."
+            name:
+              type: string
+              description: "Stream name."
+            amount:
+              type: number
+              description: "Allocated cash flow amount."
+            category:
+              type: string
+              description: "Broad category (Revenue, Expense, OtherIncome)."
+            subType:
+              type: string
+              description: "Sub category (Operating, Financing, Tax, etc.)."
+            tags:
+              type: array
+              items: { type: string }
+              description: "View tags for this line (e.g. GAAP, Forecast)."
+          required:
+            - streamId
+            - amount
+      unleveredCF:
+        type: number
+        description: "Net cash‐flow before financing costs."
+      leveredCF:
+        type: number
+        description: "Net cash‐flow after financing costs."
+    required:
+      - periodStart
+      - periodEnd
+      - lineItems
+      - unleveredCF
+      - leveredCF

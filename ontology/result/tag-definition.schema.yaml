@@ -1,0 +1,26 @@
+# ontology/result/tag-definition.schema.yaml
+$id: "https://cfdl.dev/ontology/result/tag-definition.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Tag Definition"
+description: >
+  Defines a presentation or view tag that can be applied to streams,
+  assumptions, or results to filter, group, or style outputs.
+type: object
+additionalProperties: false
+
+properties:
+  name:
+    type: string
+    description: "Tag name (e.g. GAAP, NonGAAP, Forecast, Actual, Tax)."
+
+  category:
+    type: string
+    description: "Tag dimension (e.g. 'presentation', 'timing', 'source')."
+
+  description:
+    type: string
+    description: "Human-readable explanation of this tag’s meaning."
+
+required:
+  - name
+  - category

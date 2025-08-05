@@ -1,0 +1,98 @@
+$id: "https://cfdl.dev/ontology/behavior/stream.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Stream"
+description: >
+  Defines a cash-flow stream with its scope, scheduling, amount logic,
+  optional growth model, presentation tags, and metadata.
+type: object
+
+properties:
+  id:
+    type: string
+    format: uri
+    description: "Unique identifier for this stream."
+
+  name:
+    type: string
+    description: "Human-readable name of the stream."
+
+  description:
+    type: string
+    description: "Long-form notes about the stream."
+
+  scope:
+    type: string
+    description: "Scope at which this stream is defined."
+    enum: [component, asset, deal, portfolio, fund]
+
+  category:
+    type: string
+    description: "Broad financial statement category."
+    enum: [Revenue, Expense, OtherIncome]
+
+  subType:
+    type: string
+    description: >
+      Sub-category aligned with reporting or domain logic
+      (e.g. Operating, Financing, Tax, CapEx, Fee, Other).
+    enum: [Operating, Financing, Tax, CapEx, Fee, Other]
+
+  schedule:
+    $ref: "https://cfdl.dev/ontology/temporal/schedule.schema.yaml"
+    description: "Schedule defining when and how often cash flows occur."
+
+  amount:
+    description: >
+      Base amount or specialized amount definition. Use a plain number
+      for fixed amounts, or a calculator definition (e.g., loan payment).
+    oneOf:
+      - type: number
+      - $ref: "https://cfdl.dev/ontology/behavior/calculators.schema.yaml#/definitions/loanPayment"
+
+  growth:
+    type: object
+    description: >
+      Optional growth model applied to the base amount each period.
+      If omitted, the amount remains static.
+    properties:
+      type:
+        type: string
+        enum: [fixed, expression, distribution, randomWalk]
+        description: "Growth model type."
+      rate:
+        type: number
+        description: "Fixed growth rate (for `fixed` type)."
+      expr:
+        type: string
+        description: "Expression to calculate growth (for `expression` type)."
+      distribution:
+        type: object
+        description: "Parameters for distribution sampling (for `distribution` type)."
+        additionalProperties: true
+      randomWalk:
+        type: object
+        description: "Parameters for random-walk growth (for `randomWalk` type)."
+        additionalProperties: true
+    required: [type]
+    additionalProperties: false
+
+  tags:
+    type: array
+    description: >
+      View or presentation tags for filtering (e.g., GAAP, NonGAAP,
+      Forecast, Actual, Tax).
+    items:
+      type: string
+
+  metadata:
+    type: object
+    description: "Free-form metadata (UI hints, custom attributes)."
+    additionalProperties: true
+
+required:
+  - id
+  - name
+  - level
+  - category
+  - schedule
+  - amount

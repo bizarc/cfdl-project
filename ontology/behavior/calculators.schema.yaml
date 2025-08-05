@@ -1,0 +1,93 @@
+# ontology/behavior/calculators.schema.yaml
+$id: "https://cfdl.dev/ontology/behavior/calculators.schema.yaml"
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Calculators"
+description: >
+  Defines built-in calculator functions that can be invoked
+  in DSL amount or logic-block definitions.  Each calculator
+  takes named parameters and returns a numeric result.
+type: object
+definitions:
+  loanPayment:
+    type: object
+    description: >
+      Compute level debt service (principal + interest) for an
+      amortizing loan.
+    properties:
+      principal:
+        type: number
+        description: "Loan principal amount."
+      rate:
+        type: number
+        description: "Annual interest rate (decimal, e.g. 0.05 for 5%)."
+      termMonths:
+        type: integer
+        description: "Total number of monthly payments."
+    required: [principal, rate, termMonths]
+  straightLineDepreciation:
+    type: object
+    description: >
+      Compute straight-line depreciation expense per period.
+    properties:
+      cost:
+        type: number
+        description: "Initial capital cost."
+      salvage:
+        type: number
+        description: "Residual value at end of life."
+      lifePeriods:
+        type: integer
+        description: "Total number of periods over which to depreciate."
+    required: [cost, salvage, lifePeriods]
+  decliningBalanceDepreciation:
+    type: object
+    description: >
+      Compute periodic depreciation using a fixed-rate declining balance.
+    properties:
+      cost:
+        type: number
+        description: "Initial capital cost."
+      rate:
+        type: number
+        description: "Depreciation rate per period (decimal)."
+    required: [cost, rate]
+  npv:
+    type: object
+    description: >
+      Compute Net Present Value given a discount rate and a series of cash flows.
+    properties:
+      rate:
+        type: number
+        description: "Discount rate per period (decimal)."
+      cashFlows:
+        type: array
+        description: "Array of numeric cash flows, indexed by period."
+        items:
+          type: number
+    required: [rate, cashFlows]
+  irr:
+    type: object
+    description: >
+      Compute Internal Rate of Return that sets NPV to zero for a cash flow series.
+    properties:
+      cashFlows:
+        type: array
+        description: "Array of numeric cash flows, indexed by period (initial investment negative)."
+        items:
+          type: number
+    required: [cashFlows]
+  presentValue:
+    type: object
+    description: >
+      Compute present value of a future lump sum.
+    properties:
+      amount:
+        type: number
+        description: "Future cash amount."
+      rate:
+        type: number
+        description: "Discount rate per period (decimal)."
+      periods:
+        type: integer
+        description: "Number of periods until payment."
+    required: [amount, rate, periods]
