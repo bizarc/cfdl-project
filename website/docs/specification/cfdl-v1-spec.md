@@ -303,4 +303,4 @@ CFDL v1.0 is the initial stable release. Future versions will maintain backward 
 
 ## Examples
 
-See the [Examples Gallery](../authoring/examples-gallery.md) for complete, working CFDL models demonstrating various use cases.
+See the [Examples Gallery](../authoring/examples-gallery) for complete, working CFDL models demonstrating various use cases.

@@ -1,8 +1,9 @@
-// CFDL Example 2: Multi-Asset Portfolio Deal
-// This example demonstrates a complex deal with multiple assets,
-// different revenue streams per asset, and shared deal-level expenses
+# CFDL Example 2: Multi-Asset Portfolio Deal
+# This example demonstrates a complex deal with multiple assets,
+# different revenue streams per asset, and shared deal-level expenses
 
-deal RetailPortfolio2024 {
+deal:
+  RetailPortfolio2024:
     id: "https://example.com/deals/retail-portfolio-2024"
     name: "Regional Retail Portfolio"
     description: "Mixed-use retail portfolio across three metropolitan areas"
@@ -14,348 +15,303 @@ deal RetailPortfolio2024 {
     analysisStart: 2024-01-01
     holdingPeriodYears: 7
     
-    calendar: {
+    calendar:
         frequency: monthly
         businessDayConvention: modified_following
         dayCount: 30/360
         holidayCalendar: "US"
-    }
     
-    participants: [
-        {
-            partyId: "https://example.com/parties/reit-sponsor"
-            role: sponsor
-            amount: 15000000
-        },
-        {
-            partyId: "https://example.com/parties/insurance-lender"
-            role: lender
-            amount: 45000000
-        },
-        {
-            partyId: "https://example.com/parties/mezzanine-fund"
-            role: lender
-            amount: 10000000
-        }
-    ]
+    participants:
+        - partyId: "https://example.com/parties/reit-sponsor"
+          role: sponsor
+          amount: 15000000
+        - partyId: "https://example.com/parties/insurance-lender"
+          role: lender
+          amount: 45000000
+        - partyId: "https://example.com/parties/mezzanine-fund"
+          role: lender
+          amount: 10000000
     
-    assets: [
-        // First Asset: Shopping Center
-        asset ShoppingCenter_A {
-            id: "https://example.com/assets/shopping-center-a"
-            name: "Westfield Shopping Center"
-            dealId: "https://example.com/deals/retail-portfolio-2024"
-            category: real_estate
-            description: "Anchored shopping center with grocery and retail tenants"
-            
-            location: {
-                address: {
-                    street_address: "456 Commerce Blvd"
-                    city: "Westfield"
-                    state: "TX"
-                    postal_code: "75001"
-                    country: "USA"
-                }
-                market: "Dallas-Fort Worth"
-                timezone: "America/Chicago"
-            }
-            
-            attributes: {
-                totalSqFt: 150000
-                yearBuilt: 2018
-                occupancyRate: 0.92
-                anchorTenants: 2
-            }
-            
-            stateConfig: {
-                allowedStates: ["operational", "non_operational", "disposed"]
-                initialState: "operational"
-            }
-            
-            streams: [
-                stream Anchor_Rent_A {
-                    id: "https://example.com/streams/anchor-rent-a"
-                    name: "Anchor Tenant Rent"
-                    description: "Rent from grocery store anchor tenant"
-                    scope: asset
-                    category: Revenue
-                    subType: Operating
-                    
-                    schedule: {
-                        type: recurring
-                        startDate: 2024-01-01
-                        recurrenceRule: {
-                            freq: MONTHLY
-                            interval: 1
-                        }
-                    }
-                    
-                    amount: 45000
-                    
-                    growth: {
-                        type: fixed
-                        rate: 0.02  // 2% annual growth
-                    }
-                    
-                    tags: ["GAAP", "Forecast", "BaseRent"]
-                },
+    assets:
+        # First Asset: Shopping Center
+        - asset:
+            ShoppingCenter_A:
+                id: "https://example.com/assets/shopping-center-a"
+                name: "Westfield Shopping Center"
+                dealId: "RetailPortfolio2024"  # Fixed reference to match actual deal ID
+                category: real_estate
+                description: "Anchored shopping center with grocery and retail tenants"
                 
-                stream Shop_Rent_A {
-                    id: "https://example.com/streams/shop-rent-a"
-                    name: "Shop Tenant Rent"
-                    description: "Rent from small shop tenants"
-                    scope: asset
-                    category: Revenue
-                    subType: Operating
-                    
-                    schedule: {
-                        type: recurring
-                        startDate: 2024-01-01
-                        recurrenceRule: {
-                            freq: MONTHLY
-                            interval: 1
-                        }
-                    }
-                    
-                    amount: 28000
-                    
-                    growth: {
-                        type: fixed
-                        rate: 0.035  // 3.5% annual growth
-                    }
-                    
-                    tags: ["GAAP", "Forecast", "BaseRent"]
-                }
-            ]
-        },
-        
-        // Second Asset: Strip Mall
-        asset StripMall_B {
-            id: "https://example.com/assets/strip-mall-b"
-            name: "Eastgate Strip Mall"
-            dealId: "https://example.com/deals/retail-portfolio-2024"
-            category: real_estate
-            description: "Neighborhood strip mall with service tenants"
-            
-            location: {
-                address: {
-                    street_address: "789 Main Street"
-                    city: "Eastgate"
-                    state: "TX"
-                    postal_code: "75002"
-                    country: "USA"
-                }
-                market: "Dallas-Fort Worth"
-                timezone: "America/Chicago"
-            }
-            
-            attributes: {
-                totalSqFt: 75000
-                yearBuilt: 2015
-                occupancyRate: 0.88
-                anchorTenants: 0
-            }
-            
-            stateConfig: {
-                allowedStates: ["operational", "non_operational", "disposed"]
-                initialState: "operational"
-            }
-            
-            streams: [
-                stream Strip_Rent_B {
-                    id: "https://example.com/streams/strip-rent-b"
-                    name: "Strip Mall Rent"
-                    description: "Combined rent from all strip mall tenants"
-                    scope: asset
-                    category: Revenue
-                    subType: Operating
-                    
-                    schedule: {
-                        type: recurring
-                        startDate: 2024-01-01
-                        recurrenceRule: {
-                            freq: MONTHLY
-                            interval: 1
-                        }
-                    }
-                    
-                    amount: 32000
-                    
-                    growth: {
-                        type: fixed
-                        rate: 0.025  // 2.5% annual growth  
-                    }
-                    
-                    tags: ["GAAP", "Forecast", "BaseRent"]
-                },
+                location:
+                    address:
+                        street_address: "456 Commerce Blvd"
+                        city: "Westfield"
+                        state: "TX"
+                        postal_code: "75001"
+                        country: "USA"
+                    market: "Dallas-Fort Worth"
+                    timezone: "America/Chicago"
                 
-                // Capital Improvement - One-time expense
-                stream CapEx_B {
-                    id: "https://example.com/streams/capex-b"
-                    name: "Parking Lot Renovation"
-                    description: "Major parking lot and facade improvements"
-                    scope: asset
-                    category: Expense
-                    subType: CapEx
+                attributes:
+                    totalSqFt: 150000
+                    yearBuilt: 2018
+                    occupancyRate: 0.92
+                    anchorTenants: 2
+                
+                stateConfig:
+                    allowedStates: ["operational", "non_operational", "disposed"]
+                    initialState: "operational"
+                
+                streams:
+                    - stream:
+                        Anchor_Rent_A:
+                            id: "https://example.com/streams/anchor-rent-a"
+                            name: "Anchor Tenant Rent"
+                            description: "Rent from grocery store anchor tenant"
+                            scope: asset
+                            category: Revenue
+                            subType: Operating
+                            
+                            schedule:
+                                type: recurring
+                                startDate: 2024-01-01
+                                recurrenceRule:
+                                    freq: monthly  # Fixed: lowercase as per schema
+                                    interval: 1
+                            
+                            amount: 45000
+                            
+                            growth:
+                                type: fixed
+                                rate: 0.02  # 2% annual growth
+                            
+                            tags: ["GAAP", "Forecast", "BaseRent"]
                     
-                    schedule: {
-                        type: oneTime
-                        date: 2025-06-01
-                    }
+                    - stream:
+                        Shop_Rent_A:
+                            id: "https://example.com/streams/shop-rent-a"
+                            name: "Shop Tenant Rent"
+                            description: "Rent from small shop tenants"
+                            scope: asset
+                            category: Revenue
+                            subType: Operating
+                            
+                            schedule:
+                                type: recurring
+                                startDate: 2024-01-01
+                                recurrenceRule:
+                                    freq: monthly  # Fixed: lowercase as per schema
+                                    interval: 1
+                            
+                            amount: 28000
+                            
+                            growth:
+                                type: fixed
+                                rate: 0.035  # 3.5% annual growth
+                            
+                            tags: ["GAAP", "Forecast", "BaseRent"]
+        
+        # Second Asset: Strip Mall
+        - asset:
+            StripMall_B:
+                id: "https://example.com/assets/strip-mall-b"
+                name: "Eastgate Strip Mall"
+                dealId: "RetailPortfolio2024"  # Fixed reference to match actual deal ID
+                category: real_estate
+                description: "Neighborhood strip mall with service tenants"
+                
+                location:
+                    address:
+                        street_address: "789 Main Street"
+                        city: "Eastgate"
+                        state: "TX"
+                        postal_code: "75002"
+                        country: "USA"
+                    market: "Dallas-Fort Worth"
+                    timezone: "America/Chicago"
+                
+                attributes:
+                    totalSqFt: 75000
+                    yearBuilt: 2015
+                    occupancyRate: 0.88
+                    anchorTenants: 0
+                
+                stateConfig:
+                    allowedStates: ["operational", "non_operational", "disposed"]
+                    initialState: "operational"
+                
+                streams:
+                    - stream:
+                        Strip_Rent_B:
+                            id: "https://example.com/streams/strip-rent-b"
+                            name: "Strip Mall Rent"
+                            description: "Combined rent from all strip mall tenants"
+                            scope: asset
+                            category: Revenue
+                            subType: Operating
+                            
+                            schedule:
+                                type: recurring
+                                startDate: 2024-01-01
+                                recurrenceRule:
+                                    freq: monthly  # Fixed: lowercase as per schema
+                                    interval: 1
+                            
+                            amount: 32000
+                            
+                            growth:
+                                type: fixed
+                                rate: 0.025  # 2.5% annual growth  
+                            
+                            tags: ["GAAP", "Forecast", "BaseRent"]
                     
-                    amount: 150000
-                    
-                    tags: ["GAAP", "Forecast", "CapEx"]
-                }
-            ]
-        }
-    ]
+                    # Capital Improvement - One-time expense
+                    - stream:
+                        CapEx_B:
+                            id: "https://example.com/streams/capex-b"
+                            name: "Parking Lot Renovation"
+                            description: "Major parking lot and facade improvements"
+                            scope: asset
+                            category: Expense
+                            subType: CapEx
+                            
+                            schedule:
+                                type: oneTime
+                                date: 2025-06-01
+                            
+                            amount: 150000
+                            
+                            tags: ["GAAP", "Forecast", "CapEx"]
     
-    // Deal-level streams (shared across all assets)
-    streams: [
-        // Senior Debt Service
-        stream SeniorDebt {
-            id: "https://example.com/streams/senior-debt"
-            name: "Senior Debt Service"
-            description: "Monthly payments on senior mortgage debt"
-            scope: deal
-            category: Expense
-            subType: Financing
-            
-            schedule: {
-                type: recurring
-                startDate: 2024-01-01
-                recurrenceRule: {
-                    freq: MONTHLY
-                    interval: 1
-                }
-            }
-            
-            amount: {
-                loanPayment: {
-                    principal: 45000000
-                    rate: 0.055  // 5.5% annual rate
-                    termMonths: 360  // 30-year amortization
-                }
-            }
-            
-            tags: ["GAAP", "Forecast", "SeniorDebt"]
-        },
+    # Deal-level streams (shared across all assets)
+    streams:
+        # Senior Debt Service
+        - stream:
+            SeniorDebt:
+                id: "https://example.com/streams/senior-debt"
+                name: "Senior Debt Service"
+                description: "Monthly payments on senior mortgage debt"
+                scope: deal
+                category: Expense
+                subType: Financing
+                
+                schedule:
+                    type: recurring
+                    startDate: 2024-01-01
+                    recurrenceRule:
+                        freq: monthly  # Fixed: lowercase as per schema
+                        interval: 1
+                
+                amount:
+                    loanPayment:
+                        principal: 45000000
+                        rate: 0.055  # 5.5% annual rate
+                        termMonths: 360  # 30-year amortization
+                
+                tags: ["GAAP", "Forecast", "SeniorDebt"]
         
-        // Mezzanine Debt - Interest Only
-        stream MezzanineDebt {
-            id: "https://example.com/streams/mezzanine-debt"
-            name: "Mezzanine Debt Service"
-            description: "Monthly interest-only payments on mezzanine debt"
-            scope: deal
-            category: Expense
-            subType: Financing
-            
-            schedule: {
-                type: recurring
-                startDate: 2024-01-01
-                recurrenceRule: {
-                    freq: MONTHLY
-                    interval: 1
-                }
-            }
-            
-            amount: 83333  // $10M * 10% / 12 months
-            
-            tags: ["GAAP", "Forecast", "MezzanineDebt"]
-        },
+        # Mezzanine Debt - Interest Only
+        - stream:
+            MezzanineDebt:
+                id: "https://example.com/streams/mezzanine-debt"
+                name: "Mezzanine Debt Service"
+                description: "Monthly interest-only payments on mezzanine debt"
+                scope: deal
+                category: Expense
+                subType: Financing
+                
+                schedule:
+                    type: recurring
+                    startDate: 2024-01-01
+                    recurrenceRule:
+                        freq: monthly  # Fixed: lowercase as per schema
+                        interval: 1
+                
+                amount: 83333  # $10M * 10% / 12 months
+                
+                tags: ["GAAP", "Forecast", "MezzanineDebt"]
         
-        // Management Fees - Quarterly
-        stream MgmtFees {
-            id: "https://example.com/streams/mgmt-fees"
-            name: "Portfolio Management Fees"
-            description: "Quarterly asset management fees"
-            scope: deal
-            category: Expense
-            subType: Fee
-            
-            schedule: {
-                type: recurring
-                startDate: 2024-03-31
-                recurrenceRule: {
-                    freq: MONTHLY
-                    interval: 3  // Every 3 months (quarterly)
-                }
-            }
-            
-            amount: 75000  // Quarterly fee
-            
-            tags: ["GAAP", "Forecast", "Fees"]
-        },
+        # Management Fees - Quarterly
+        - stream:
+            MgmtFees:
+                id: "https://example.com/streams/mgmt-fees"
+                name: "Portfolio Management Fees"
+                description: "Quarterly asset management fees"
+                scope: deal
+                category: Expense
+                subType: Fee
+                
+                schedule:
+                    type: recurring
+                    startDate: 2024-03-31
+                    recurrenceRule:
+                        freq: monthly  # Fixed: lowercase as per schema
+                        interval: 3  # Every 3 months (quarterly)
+                
+                amount: 75000  # Quarterly fee
+                
+                tags: ["GAAP", "Forecast", "Fees"]
         
-        // Property Taxes - Semi-annual
-        stream PropertyTaxes {
-            id: "https://example.com/streams/property-taxes"
-            name: "Property Taxes"
-            description: "Semi-annual property tax payments"
-            scope: deal
-            category: Expense
-            subType: Tax
-            
-            schedule: {
-                type: recurring
-                startDate: 2024-04-01
-                recurrenceRule: {
-                    freq: MONTHLY
-                    interval: 6  // Every 6 months
-                }
-            }
-            
-            amount: 180000  // Semi-annual payment
-            
-            growth: {
-                type: fixed
-                rate: 0.04  // 4% annual tax growth
-            }
-            
-            tags: ["GAAP", "Forecast", "Taxes"]
-        },
+        # Property Taxes - Semi-annual
+        - stream:
+            PropertyTaxes:
+                id: "https://example.com/streams/property-taxes"
+                name: "Property Taxes"
+                description: "Semi-annual property tax payments"
+                scope: deal
+                category: Expense
+                subType: Tax
+                
+                schedule:
+                    type: recurring
+                    startDate: 2024-04-01
+                    recurrenceRule:
+                        freq: monthly  # Fixed: lowercase as per schema
+                        interval: 6  # Every 6 months
+                
+                amount: 180000  # Semi-annual payment
+                
+                growth:
+                    type: fixed
+                    rate: 0.04  # 4% annual tax growth
+                
+                tags: ["GAAP", "Forecast", "Taxes"]
         
-        // Disposition Proceeds - Date bounded (staggered asset sales)
-        stream Disposition_A {
-            id: "https://example.com/streams/disposition-a"
-            name: "Shopping Center Sale"
-            description: "Net proceeds from shopping center sale"
-            scope: deal
-            category: Revenue
-            subType: Other
-            
-            schedule: {
-                type: oneTime
-                date: 2029-06-30
-            }
-            
-            amount: 35000000
-            
-            tags: ["GAAP", "Forecast", "Exit"]
-        },
+        # Disposition Proceeds - Date bounded (staggered asset sales)
+        - stream:
+            Disposition_A:
+                id: "https://example.com/streams/disposition-a"
+                name: "Shopping Center Sale"
+                description: "Net proceeds from shopping center sale"
+                scope: deal
+                category: Revenue
+                subType: Other
+                
+                schedule:
+                    type: oneTime
+                    date: 2029-06-30
+                
+                amount: 35000000
+                
+                tags: ["GAAP", "Forecast", "Exit"]
         
-        stream Disposition_B {
-            id: "https://example.com/streams/disposition-b"  
-            name: "Strip Mall Sale"
-            description: "Net proceeds from strip mall sale"
-            scope: deal
-            category: Revenue
-            subType: Other
-            
-            schedule: {
-                type: oneTime
-                date: 2031-03-01
-            }
-            
-            amount: 18000000
-            
-            tags: ["GAAP", "Forecast", "Exit"]
-        }
-    ]
+        - stream:
+            Disposition_B:
+                id: "https://example.com/streams/disposition-b"  
+                name: "Strip Mall Sale"
+                description: "Net proceeds from strip mall sale"
+                scope: deal
+                category: Revenue
+                subType: Other
+                
+                schedule:
+                    type: oneTime
+                    date: 2031-03-01
+                
+                amount: 18000000
+                
+                tags: ["GAAP", "Forecast", "Exit"]
     
-    stateConfig: {
+    stateConfig:
         allowedStates: ["active", "partial_disposition", "full_disposition", "closed"]
         initialState: "active"
-    }
-}

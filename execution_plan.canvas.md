@@ -1,28 +1,30 @@
-# CFDL v1.0 Demo Execution Plan
+# CFDL v1.2 Demo Execution Plan
 
-This document outlines the roadmap for building a minimum viable CFDL v1.0 demo, following **Option A**: starting with schema loading and validation.
+This document outlines the roadmap for building a minimum viable CFDL v1.2 demo, using **YAML-based parsing** for robust and maintainable processing.
 
 ---
 
-## 1. Bootstrap the DSL Compilation Pipeline
+## 1. ✅ Bootstrap the DSL Compilation Pipeline [COMPLETED]
 
-1. **Load & Validate Schemas**  
+1. **✅ Load & Validate Schemas**  
    - Load all `*.schema.yaml` files from `ontology/`.  
    - Resolve and validate `$ref` links across schemas.  
-   - Unit-test each schema for syntax and completeness.
+   - Comprehensive schema validation with detailed error reporting.
 
-2. **Define / Polish Grammar**  
-   - Finalize `dsl/grammar/cfdl.g4` with rules for all entity, behavior, temporal, and result constructs.  
-   - Embed enums (`dealType`, `assetCategory`, `logicBlockType`, etc.) directly in the grammar.
+2. **✅ YAML-Based Parsing**  
+   - **DECISION**: Jackson YAML parsing for reliability.
+   - CFDL files use standard YAML syntax: `deal: EntityName:` structure.
+   - Eliminates complex grammar maintenance and parsing edge cases.
 
-3. **AST & Schema-Driven Validation**  
-   - Generate an AST via ANTLR visitor.  
+3. **✅ AST & Schema-Driven Validation**  
+   - Generate AST from Jackson JsonNode tree via `CFDLYamlASTBuilder`.  
    - Validate each AST node against its JSON-Schema: required fields, types, enums.  
-   - Surface clear errors/warnings for any mismatches.
+   - Surface clear errors/warnings with `ComprehensiveSchemaChecker`.
 
-4. **Intermediate Representation (IR) Builder**  
+4. **✅ Intermediate Representation (IR) Builder**  
    - Translate AST nodes into a normalized IR (JSON) enriched with schema metadata.  
-   - Ensure the IR contains all data needed by the engine and UI layers.
+   - **PROVEN**: Full pipeline works end-to-end with atomic cash flows example.
+   - IR contains all data needed by the engine and UI layers.
 
 ---
 

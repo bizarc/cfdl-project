@@ -11,7 +11,7 @@ properties:
   freq:
     type: string
     description: "Recurrence frequency."
-    enum: [DAILY, WEEKLY, MONTHLY, YEARLY]
+    enum: [daily, weekly, monthly, yearly]
 
   interval:
     type: integer

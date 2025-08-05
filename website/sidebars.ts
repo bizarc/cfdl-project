@@ -75,6 +75,16 @@ const sidebars: SidebarsConfig = {
       label: 'Authoring Guide',
       items: [
         'authoring/best-practices',
+        'authoring/examples-gallery',
+      ],
+    },
+
+    // Developer Guide
+    {
+      type: 'category',
+      label: 'Developer',
+      items: [
+        'developer/troubleshooting',
       ],
     },
   ],

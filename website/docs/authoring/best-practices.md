@@ -537,4 +537,4 @@ deal:
 - **Date formats**: Use ISO 8601 format (YYYY-MM-DD)
 - **Number formats**: Use numeric values, not strings, for amounts
 
-Need help? Check our [Troubleshooting Guide](../developer/troubleshooting.md) or [Examples Gallery](./examples-gallery.md) for working models.
+Need help? Check our [Troubleshooting Guide](../developer/troubleshooting) or [Examples Gallery](./examples-gallery) for working models.

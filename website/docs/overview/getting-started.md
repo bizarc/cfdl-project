@@ -316,6 +316,6 @@ If you see YAML parsing errors:
 2. Ensure colons have spaces after them
 3. Verify quotes around string values
 
-Need help? Check our [Troubleshooting Guide](../developer/troubleshooting.md) or [open an issue](https://github.com/your-username/cfdl-project/issues).
+Need help? Check our [Troubleshooting Guide](../developer/troubleshooting) or [open an issue](https://github.com/bizarc/cfdl-project/issues).
 
 Happy modeling! 🚀

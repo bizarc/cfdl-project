@@ -1,8 +1,9 @@
-// CFDL Example: Atomic Cash Flow Rollup - Commercial Real Estate
-// This example demonstrates the full hierarchy: Deal → Asset → Components → Streams
-// Each level generates its own cash flows which roll up to the parent level
+# CFDL Example: Atomic Cash Flow Rollup - Commercial Real Estate
+# This example demonstrates the full hierarchy: Deal → Asset → Components → Streams
+# Each level generates its own cash flows which roll up to the parent level
 
-deal OfficeBuilding_AtomicExample {
+deal:
+  OfficeBuilding_AtomicExample:
     id: "https://example.com/deals/office-atomic-cashflows"
     name: "Downtown Office Building - Atomic Cash Flows"
     description: "Multi-tenant office building demonstrating atomic cash flow generation from individual units"
@@ -14,441 +15,300 @@ deal OfficeBuilding_AtomicExample {
     analysisStart: 2024-01-01
     holdingPeriodYears: 5
     
-    calendar: {
+    calendar:
         frequency: monthly
         businessDayConvention: following
         dayCount: actual/365
         holidayCalendar: "US"
-    }
     
-    participants: [
-        {
-            partyId: "https://example.com/parties/sponsor"
-            role: sponsor
-            amount: 10000000
-        },
-        {
-            partyId: "https://example.com/parties/lender"
-            role: lender
-            amount: 30000000
-        }
-    ]
-    
-    assets: [
-        asset OfficeBuilding {
-            id: "https://example.com/assets/downtown-office-building"
-            name: "Downtown Office Building"
-            dealId: "https://example.com/deals/office-atomic-cashflows"
-            category: real_estate
-            description: "10-story Class A office building with 50 individual units"
-            
-            location: {
-                address: {
-                    street_address: "100 Main Street"
-                    city: "Business District"
-                    state: "CA"
-                    postal_code: "90210"
-                    country: "USA"
-                }
-                market: "Downtown Business District"
-                timezone: "America/Los_Angeles"
-            }
-            
-            attributes: {
-                totalSqFt: 500000
-                floors: 10
-                unitsPerFloor: 5
-                totalUnits: 50
-                yearBuilt: 2020
-                buildingClass: "A"
-                avgRentPSF: 60.00
-            }
-            
-            stateConfig: {
-                allowedStates: ["operational", "non_operational", "disposed"]
-                initialState: "operational"
-            }
-            
-            // Building-level components (individual office units)
-            components: [
-                // Floor 1 - Premium Units
-                component Unit_101 {
-                    id: "https://example.com/components/unit-101"
-                    name: "Unit 101 - Corner Office Suite"
-                    description: "Premium 12,000 SF corner office suite on ground floor"
-                    assetId: "https://example.com/assets/downtown-office-building"
-                    componentType: "office_unit"
-                    
-                    attributes: {
-                        floor: 1
-                        sqFt: 12000
-                        unit_type: "corner_suite"
-                        windows: "panoramic"
-                        parking_spaces: 25
-                        conference_rooms: 4
-                    }
-                    
-                    stateConfig: {
-                        allowedStates: ["vacant", "leased", "under_renovation"]
-                        initialState: "leased"
-                    }
-                    
-                    // ATOMIC CASH FLOWS - Individual unit level
-                    streams: [
-                        stream Unit101_BaseRent {
-                            id: "https://example.com/streams/unit-101-base-rent"
-                            name: "Unit 101 Base Rent"
-                            description: "Monthly base rent from Unit 101 tenant"
-                            scope: component
-                            category: Revenue
-                            subType: Operating
-                            
-                            schedule: {
-                                type: recurring
-                                startDate: 2024-01-01
-                                recurrenceRule: {
-                                    freq: MONTHLY
-                                    interval: 1
-                                }
-                            }
-                            
-                            amount: 60000  // $5/SF * 12,000 SF
-                            
-                            growth: {
-                                type: fixed
-                                rate: 0.03  // 3% annual rent escalation
-                            }
-                            
-                            tags: ["GAAP", "Forecast", "BaseRent", "Premium"]
-                        },
-                        
-                        stream Unit101_CAM {
-                            id: "https://example.com/streams/unit-101-cam"
-                            name: "Unit 101 CAM Charges"
-                            description: "Common area maintenance charges for Unit 101"
-                            scope: component
-                            category: Revenue
-                            subType: Operating
-                            
-                            schedule: {
-                                type: recurring
-                                startDate: 2024-01-01
-                                recurrenceRule: {
-                                    freq: MONTHLY
-                                    interval: 1
-                                }
-                            }
-                            
-                            amount: 3600  // $0.30/SF * 12,000 SF
-                            
-                            growth: {
-                                type: fixed
-                                rate: 0.04  // 4% annual CAM escalation
-                            }
-                            
-                            tags: ["GAAP", "Forecast", "CAM", "Recoveries"]
-                        },
-                        
-                        stream Unit101_Utilities {
-                            id: "https://example.com/streams/unit-101-utilities"
-                            name: "Unit 101 Utility Reimbursements"
-                            description: "Utility cost reimbursements from Unit 101 tenant"
-                            scope: component
-                            category: Revenue
-                            subType: Operating
-                            
-                            schedule: {
-                                type: recurring
-                                startDate: 2024-01-01
-                                recurrenceRule: {
-                                    freq: MONTHLY
-                                    interval: 1
-                                }
-                            }
-                            
-                            amount: 2400  // $0.20/SF * 12,000 SF
-                            
-                            growth: {
-                                type: fixed
-                                rate: 0.05  // 5% annual utility escalation
-                            }
-                            
-                            tags: ["GAAP", "Forecast", "Utilities", "Recoveries"]
-                        }
-                    ]
-                },
-                
-                component Unit_102 {
-                    id: "https://example.com/components/unit-102"
-                    name: "Unit 102 - Standard Office Suite"
-                    description: "Standard 8,000 SF office suite"
-                    assetId: "https://example.com/assets/downtown-office-building"
-                    componentType: "office_unit"
-                    
-                    attributes: {
-                        floor: 1
-                        sqFt: 8000
-                        unit_type: "standard"
-                        windows: "standard"
-                        parking_spaces: 16
-                        conference_rooms: 2
-                    }
-                    
-                    stateConfig: {
-                        allowedStates: ["vacant", "leased", "under_renovation"]
-                        initialState: "leased"
-                    }
-                    
-                    // ATOMIC CASH FLOWS - Another individual unit
-                    streams: [
-                        stream Unit102_BaseRent {
-                            id: "https://example.com/streams/unit-102-base-rent"
-                            name: "Unit 102 Base Rent"
-                            description: "Monthly base rent from Unit 102 tenant"
-                            scope: component
-                            category: Revenue
-                            subType: Operating
-                            
-                            schedule: {
-                                type: recurring
-                                startDate: 2024-01-01
-                                recurrenceRule: {
-                                    freq: MONTHLY
-                                    interval: 1
-                                }
-                            }
-                            
-                            amount: 38400  // $4.80/SF * 8,000 SF (slightly lower rate)
-                            
-                            growth: {
-                                type: fixed
-                                rate: 0.025  // 2.5% annual rent escalation
-                            }
-                            
-                            tags: ["GAAP", "Forecast", "BaseRent", "Standard"]
-                        },
-                        
-                        stream Unit102_CAM {
-                            id: "https://example.com/streams/unit-102-cam"
-                            name: "Unit 102 CAM Charges"
-                            description: "Common area maintenance charges for Unit 102"
-                            scope: component
-                            category: Revenue
-                            subType: Operating
-                            
-                            schedule: {
-                                type: recurring
-                                startDate: 2024-01-01
-                                recurrenceRule: {
-                                    freq: MONTHLY
-                                    interval: 1
-                                }
-                            }
-                            
-                            amount: 2400  // $0.30/SF * 8,000 SF
-                            
-                            growth: {
-                                type: fixed
-                                rate: 0.04  // 4% annual CAM escalation
-                            }
-                            
-                            tags: ["GAAP", "Forecast", "CAM", "Recoveries"]
-                        }
-                    ]
-                }
-                
-                // Note: In reality, there would be 48 more components (Units 103-150)
-                // Each with their own atomic cash flow streams
-                // This demonstrates the scalability challenge and the need for proper rollup
-            ]
-            
-            // Asset-level streams (building-wide expenses and income)
-            streams: [
-                stream Building_PropertyMgmt {
-                    id: "https://example.com/streams/building-property-mgmt"
-                    name: "Building Property Management"
-                    description: "Monthly property management fees and building-wide expenses"
-                    scope: asset
-                    category: Expense
-                    subType: Operating
-                    
-                    schedule: {
-                        type: recurring
-                        startDate: 2024-01-01
-                        recurrenceRule: {
-                            freq: MONTHLY
-                            interval: 1
-                        }
-                    }
-                    
-                    amount: 25000  // Building-wide management
-                    
-                    growth: {
-                        type: fixed
-                        rate: 0.03  // 3% annual expense growth
-                    }
-                    
-                    tags: ["GAAP", "Forecast", "OpEx", "Management"]
-                },
-                
-                stream Building_Insurance {
-                    id: "https://example.com/streams/building-insurance"
-                    name: "Building Insurance"
-                    description: "Annual building insurance premium"
-                    scope: asset
-                    category: Expense
-                    subType: Operating
-                    
-                    schedule: {
-                        type: recurring
-                        startDate: 2024-01-01
-                        recurrenceRule: {
-                            freq: YEARLY
-                            interval: 1
-                        }
-                    }
-                    
-                    amount: 180000  // Annual insurance premium
-                    
-                    growth: {
-                        type: fixed
-                        rate: 0.04  // 4% annual insurance growth
-                    }
-                    
-                    tags: ["GAAP", "Forecast", "Insurance", "OpEx"]
-                },
-                
-                stream Building_CapEx {
-                    id: "https://example.com/streams/building-capex"
-                    name: "Building Capital Expenditures"
-                    description: "Major building improvements and capital expenditures"
-                    scope: asset
-                    category: Expense
-                    subType: CapEx
-                    
-                    schedule: {
-                        type: oneTime
-                        date: 2025-06-01  // One-time major renovation
-                    }
-                    
-                    amount: 2000000  // Major building renovation
-                    
-                    tags: ["GAAP", "Forecast", "CapEx", "Renovation"]
-                }
-            ]
-        }
-    ]
-    
-    // Deal-level streams (financing, fees, exit proceeds)
-    streams: [
-        stream Deal_DebtService {
-            id: "https://example.com/streams/deal-debt-service"
-            name: "Deal Debt Service"
-            description: "Monthly principal and interest payments on acquisition loan"
-            scope: deal
-            category: Expense
-            subType: Financing
-            
-            schedule: {
-                type: recurring
-                startDate: 2024-01-01
-                recurrenceRule: {
-                    freq: MONTHLY
-                    interval: 1
-                }
-            }
-            
-            amount: {
-                loanPayment: {
-                    principal: 30000000
-                    rate: 0.065  // 6.5% annual interest rate
-                    termMonths: 300  // 25-year amortization
-                }
-            }
-            
-            tags: ["GAAP", "Forecast", "Debt", "Financing"]
-        },
+    participants:
+        - partyId: "equity-sponsor"
+          role: sponsor
+          amount: 5000000
         
-        stream Deal_SponsorFees {
-            id: "https://example.com/streams/deal-sponsor-fees"
-            name: "Deal Sponsor Management Fees"
-            description: "Quarterly asset management fees to sponsor"
-            scope: deal
-            category: Expense
-            subType: Fee
-            
-            schedule: {
-                type: recurring
-                startDate: 2024-03-31
-                recurrenceRule: {
-                    freq: MONTHLY
-                    interval: 3  // Quarterly
-                }
-            }
-            
-            amount: 125000  // Quarterly management fee
-            
-            tags: ["GAAP", "Forecast", "Fees", "Management"]
-        },
-        
-        stream Deal_ExitProceeds {
-            id: "https://example.com/streams/deal-exit-proceeds"
-            name: "Deal Exit Proceeds"
-            description: "Net proceeds from building sale at end of hold period"
-            scope: deal
-            category: Revenue
-            subType: Other
-            
-            schedule: {
-                type: oneTime
-                date: 2029-01-15
-            }
-            
-            amount: 65000000  // Expected sale price (appreciation)
-            
-            tags: ["GAAP", "Forecast", "Exit", "Proceeds"]
-        }
-    ]
+        - partyId: "senior-lender"
+          role: lender
+          amount: 15000000
     
-    stateConfig: {
-        allowedStates: ["active", "disposition", "closed"]
-        initialState: "active"
-    }
-}
-
-/* 
-ATOMIC CASH FLOW ROLLUP EXPLANATION:
-
-This example demonstrates true atomic cash flow generation:
-
-COMPONENT LEVEL (Most Atomic):
-- Unit 101: $60,000 base rent + $3,600 CAM + $2,400 utilities = $66,000/month
-- Unit 102: $38,400 base rent + $2,400 CAM = $40,800/month  
-- Units 103-150: Similar individual streams (not shown for brevity)
-- Total Component Cash Flows: ~$5,200,000/month from all 50 units
-
-ASSET LEVEL (Building-wide):
-- Component cash flows (rolled up): ~$5,200,000/month
-- Building expenses: $(25,000)/month property mgmt, $(15,000)/month insurance
-- Net Asset Cash Flow: ~$5,160,000/month
-- Plus one-time CapEx: $(2,000,000) in 2025
-
-DEAL LEVEL (Financing & Fees):
-- Asset cash flow (rolled up): ~$5,160,000/month  
-- Deal expenses: $(197,000)/month debt service, $(42,000)/month sponsor fees
-- Net Deal Cash Flow: ~$4,921,000/month
-- Plus exit proceeds: $65,000,000 at sale
-
-This creates a complete cash flow waterfall from the most atomic level (individual office units) 
-up through the building level to the deal level, allowing for detailed analysis and reporting 
-at any level of granularity.
-
-The engine can:
-1. Generate atomic cash flows for each component
-2. Aggregate component flows to asset level  
-3. Add asset-level flows to get total asset cash flow
-4. Aggregate asset flows to deal level
-5. Add deal-level flows to get total deal cash flow
-6. Apply growth rates, schedules, and calculators at each level
-7. Generate detailed line-item reporting showing the source of every dollar
-*/
+    assets:
+        - asset:
+            OfficeBuilding:
+                id: "https://example.com/assets/downtown-office"
+                name: "Downtown Office Building"
+                description: "Class A office building in prime downtown location"
+                dealId: "OfficeBuilding_AtomicExample"
+                category: real_estate
+                
+                location:
+                    address:
+                        street_address: "123 Business District Blvd"
+                        city: "Metropolitan City"
+                        state: "NY"
+                        postal_code: "10001"
+                        country: "US"
+                    market: "New York Metro"
+                    timezone: "America/New_York"
+                
+                attributes:
+                    totalSqFt: 50000
+                    floors: 10
+                    unitsPerFloor: 2
+                    totalUnits: 20
+                    yearBuilt: 2018
+                    buildingClass: "A"
+                    avgRentPSF: 65.0
+                
+                stateConfig:
+                    allowedStates: ["pre_operational", "operational", "non_operational"]
+                    initialState: "operational"
+                
+                components:
+                    - component:
+                        Unit_101:
+                            id: "https://example.com/components/unit-101"
+                            name: "Unit 101 - Premium Corner Office"
+                            description: "Premium corner office suite with city views"
+                            assetId: "OfficeBuilding"
+                            componentType: "office_unit"
+                            
+                            attributes:
+                                sqFt: 2500
+                                unit_type: "corner_office"
+                                windows: 8
+                                parking_spaces: 3
+                                conference_rooms: 2
+                            
+                            stateConfig:
+                                allowedStates: ["vacant", "leased", "available"]
+                                initialState: "leased"
+                            
+                            streams:
+                                - stream:
+                                    Unit101_BaseRent:
+                                        id: "https://example.com/streams/unit-101-base-rent"
+                                        name: "Unit 101 - Base Rent"
+                                        description: "Monthly base rent for Unit 101"
+                                        scope: component
+                                        category: Revenue
+                                        subType: Operating
+                                        
+                                        schedule:
+                                            type: recurring
+                                            startDate: 2024-01-01
+                                            recurrenceRule:
+                                                freq: monthly
+                                                interval: 1
+                                        
+                                        amount: 60000
+                                        growth:
+                                            type: fixed
+                                            rate: 0.03
+                                        
+                                        tags: ["GAAP", "Forecast", "BaseRent", "Premium"]
+                                
+                                - stream:
+                                    Unit101_ExpenseReimbursement:
+                                        id: "https://example.com/streams/unit-101-expense-reimbursement"
+                                        name: "Unit 101 - CAM & Tax Reimbursement"
+                                        description: "Common area maintenance and tax reimbursements"
+                                        scope: component
+                                        category: Revenue
+                                        subType: Operating
+                                        
+                                        schedule:
+                                            type: recurring
+                                            startDate: 2024-01-01
+                                            recurrenceRule:
+                                                freq: monthly
+                                                interval: 1
+                                        
+                                        amount: 8000
+                                        growth:
+                                            type: fixed
+                                            rate: 0.025
+                                        
+                                        tags: ["GAAP", "Forecast", "ExpenseReimbursement"]
+                                
+                                - stream:
+                                    Unit101_ParkingRevenue:
+                                        id: "https://example.com/streams/unit-101-parking"
+                                        name: "Unit 101 - Parking Revenue"
+                                        description: "Monthly parking fees for reserved spaces"
+                                        scope: component
+                                        category: Revenue
+                                        subType: Operating
+                                        
+                                        schedule:
+                                            type: recurring
+                                            startDate: 2024-01-01
+                                            recurrenceRule:
+                                                freq: monthly
+                                                interval: 1
+                                        
+                                        amount: 450
+                                        growth:
+                                            type: fixed
+                                            rate: 0.02
+                                        
+                                        tags: ["GAAP", "Forecast", "ParkingRevenue"]
+                    
+                    - component:
+                        Unit_102:
+                            id: "https://example.com/components/unit-102"
+                            name: "Unit 102 - Standard Office Suite"
+                            description: "Standard office suite on first floor"
+                            assetId: "OfficeBuilding"
+                            componentType: "office_unit"
+                            
+                            attributes:
+                                sqFt: 2000
+                                unit_type: "standard_office"
+                                windows: 4
+                                parking_spaces: 2
+                                conference_rooms: 1
+                            
+                            streams:
+                                - stream:
+                                    Unit102_BaseRent:
+                                        id: "https://example.com/streams/unit-102-base-rent"
+                                        name: "Unit 102 - Base Rent"
+                                        description: "Monthly base rent for Unit 102"
+                                        scope: component
+                                        category: Revenue
+                                        subType: Operating
+                                        
+                                        schedule:
+                                            type: recurring
+                                            startDate: 2024-01-01
+                                            recurrenceRule:
+                                                freq: monthly
+                                                interval: 1
+                                        
+                                        amount: 48000
+                                        growth:
+                                            type: fixed
+                                            rate: 0.03
+                                        
+                                        tags: ["GAAP", "Forecast", "BaseRent"]
+                                
+                                - stream:
+                                    Unit102_ExpenseReimbursement:
+                                        id: "https://example.com/streams/unit-102-expense-reimbursement"
+                                        name: "Unit 102 - CAM & Tax Reimbursement"
+                                        description: "Common area maintenance and tax reimbursements"
+                                        scope: component
+                                        category: Revenue
+                                        subType: Operating
+                                        
+                                        schedule:
+                                            type: recurring
+                                            startDate: 2024-01-01
+                                            recurrenceRule:
+                                                freq: monthly
+                                                interval: 1
+                                        
+                                        amount: 6400
+                                        growth:
+                                            type: fixed
+                                            rate: 0.025
+                                        
+                                        tags: ["GAAP", "Forecast", "ExpenseReimbursement"]
+                
+                streams:
+                    - stream:
+                        AssetLevel_PropertyTax:
+                            id: "https://example.com/streams/asset-property-tax"
+                            name: "Property Tax"
+                            description: "Annual property tax expense"
+                            scope: asset
+                            category: Expense
+                            subType: Operating
+                            
+                            schedule:
+                                type: recurring
+                                startDate: 2024-01-01
+                                recurrenceRule:
+                                    freq: yearly
+                                    interval: 1
+                            
+                            amount: 180000
+                            growth:
+                                type: fixed
+                                rate: 0.02
+                            
+                            tags: ["GAAP", "Forecast", "PropertyTax"]
+                    
+                    - stream:
+                        AssetLevel_Insurance:
+                            id: "https://example.com/streams/asset-insurance"
+                            name: "Property Insurance"
+                            description: "Annual property insurance premium"
+                            scope: asset
+                            category: Expense
+                            subType: Operating
+                            
+                            schedule:
+                                type: oneTime
+                                date: 2024-03-01
+                            
+                            amount: 25000
+                            
+                            tags: ["GAAP", "Forecast", "Insurance"]
+    
+    streams:
+        - stream:
+            DealLevel_AcquisitionFee:
+                id: "https://example.com/streams/deal-acquisition-fee"
+                name: "Acquisition Fee"
+                description: "One-time acquisition fee paid to sponsor"
+                scope: deal
+                category: Expense
+                subType: Fee
+                
+                schedule:
+                    type: recurring
+                    startDate: 2024-01-01
+                    recurrenceRule:
+                        freq: monthly
+                        interval: 1
+                
+                amount: 8333.33
+                
+                tags: ["GAAP", "AcquisitionFee"]
+        
+        - stream:
+            DealLevel_AssetManagementFee:
+                id: "https://example.com/streams/deal-asset-mgmt-fee"
+                name: "Asset Management Fee"
+                description: "Monthly asset management fee"
+                scope: deal
+                category: Expense
+                subType: Fee
+                
+                schedule:
+                    type: recurring
+                    startDate: 2024-01-01
+                    recurrenceRule:
+                        freq: monthly
+                        interval: 1
+                
+                amount: 12500
+                
+                tags: ["GAAP", "AssetManagementFee"]
+        
+        - stream:
+            DealLevel_DispositionProceeds:
+                id: "https://example.com/streams/deal-disposition"
+                name: "Disposition Proceeds"
+                description: "Gross proceeds from asset sale at exit"
+                scope: deal
+                category: OtherIncome
+                subType: Other
+                
+                schedule:
+                    type: oneTime
+                    date: 2029-01-15
+                
+                amount: 22000000
+                
+                tags: ["GAAP", "DispositionProceeds", "Exit"]
