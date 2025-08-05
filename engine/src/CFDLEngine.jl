@@ -64,4 +64,16 @@ include("cash_flow_aggregator.jl")
 include("monte_carlo.jl")
 include("sampling.jl")
 
+# Include metrics library
+include("metrics.jl")
+
+# Include stochastic analysis library  
+include("stochastic_analysis.jl")
+
+# Export metrics functions
+export MetricResult, calculate_npv, calculate_irr, calculate_dscr, calculate_moic, calculate_payback_period, calculate_all_metrics
+
+# Export stochastic analysis functions
+export DistributionStats, StochasticMetricsResult, analyze_distribution, calculate_risk_metrics, analyze_stochastic_metrics, generate_distribution_summary, compare_distributions
+
 end # module CFDLEngine

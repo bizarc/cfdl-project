@@ -18,4 +18,10 @@ using Test
     
     # Test main aggregator (uses modular pipeline)
     include("test_cash_flow_aggregator.jl")
+    
+    # Test metrics library
+    include("test_metrics.jl")
+    
+    # Test stochastic analysis library
+    include("test_stochastic_analysis.jl")
 end
