@@ -1,8 +1,5 @@
 // Generated from cfdl.g4 by ANTLR 4.13.1
 
-  package dev.cfdl.parser;
-
-
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -271,6 +268,18 @@ public class cfdlBaseListener implements cfdlListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterDealTypeValue(cfdlParser.DealTypeValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDealTypeValue(cfdlParser.DealTypeValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterAssetProperty(cfdlParser.AssetPropertyContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -278,6 +287,30 @@ public class cfdlBaseListener implements cfdlListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAssetProperty(cfdlParser.AssetPropertyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAssetCategoryValue(cfdlParser.AssetCategoryValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAssetCategoryValue(cfdlParser.AssetCategoryValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAssetStateValue(cfdlParser.AssetStateValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAssetStateValue(cfdlParser.AssetStateValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -302,6 +335,54 @@ public class cfdlBaseListener implements cfdlListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitStreamProperty(cfdlParser.StreamPropertyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterComponentScopeValue(cfdlParser.ComponentScopeValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitComponentScopeValue(cfdlParser.ComponentScopeValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStreamCategoryValue(cfdlParser.StreamCategoryValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStreamCategoryValue(cfdlParser.StreamCategoryValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStreamSubTypeValue(cfdlParser.StreamSubTypeValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStreamSubTypeValue(cfdlParser.StreamSubTypeValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAmountTypeValue(cfdlParser.AmountTypeValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAmountTypeValue(cfdlParser.AmountTypeValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

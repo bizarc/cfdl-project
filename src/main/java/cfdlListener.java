@@ -1,7 +1,4 @@
 // Generated from cfdl.g4 by ANTLR 4.13.1
-
-  package dev.cfdl.parser;
-
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -220,6 +217,16 @@ public interface cfdlListener extends ParseTreeListener {
 	 */
 	void exitDealProperty(cfdlParser.DealPropertyContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link cfdlParser#dealTypeValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterDealTypeValue(cfdlParser.DealTypeValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link cfdlParser#dealTypeValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitDealTypeValue(cfdlParser.DealTypeValueContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link cfdlParser#assetProperty}.
 	 * @param ctx the parse tree
 	 */
@@ -229,6 +236,26 @@ public interface cfdlListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAssetProperty(cfdlParser.AssetPropertyContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link cfdlParser#assetCategoryValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssetCategoryValue(cfdlParser.AssetCategoryValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link cfdlParser#assetCategoryValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssetCategoryValue(cfdlParser.AssetCategoryValueContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link cfdlParser#assetStateValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssetStateValue(cfdlParser.AssetStateValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link cfdlParser#assetStateValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssetStateValue(cfdlParser.AssetStateValueContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link cfdlParser#componentProperty}.
 	 * @param ctx the parse tree
@@ -249,6 +276,46 @@ public interface cfdlListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStreamProperty(cfdlParser.StreamPropertyContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link cfdlParser#componentScopeValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterComponentScopeValue(cfdlParser.ComponentScopeValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link cfdlParser#componentScopeValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitComponentScopeValue(cfdlParser.ComponentScopeValueContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link cfdlParser#streamCategoryValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterStreamCategoryValue(cfdlParser.StreamCategoryValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link cfdlParser#streamCategoryValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitStreamCategoryValue(cfdlParser.StreamCategoryValueContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link cfdlParser#streamSubTypeValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterStreamSubTypeValue(cfdlParser.StreamSubTypeValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link cfdlParser#streamSubTypeValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitStreamSubTypeValue(cfdlParser.StreamSubTypeValueContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link cfdlParser#amountTypeValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterAmountTypeValue(cfdlParser.AmountTypeValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link cfdlParser#amountTypeValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitAmountTypeValue(cfdlParser.AmountTypeValueContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link cfdlParser#assumptionProperty}.
 	 * @param ctx the parse tree

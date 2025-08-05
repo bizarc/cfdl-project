@@ -1,0 +1,187 @@
+// CFDL Example 1: Simple Office Building Deal
+// This example demonstrates a complete commercial real estate deal
+// with all required fields for cash flow generation
+
+deal OfficeBuilding123 {
+    id: "https://example.com/deals/office-building-123"
+    name: "Downtown Office Building"
+    description: "12-story Class A office building in downtown district"
+    dealType: commercial_real_estate
+    currency: "USD"
+    
+    entryDate: 2024-01-15
+    exitDate: 2029-01-15
+    analysisStart: 2024-01-01
+    holdingPeriodYears: 5
+    
+    calendar: {
+        frequency: monthly
+        businessDayConvention: following
+        dayCount: actual/365
+        holidayCalendar: "US"
+    }
+    
+    participants: [
+        {
+            partyId: "https://example.com/parties/equity-sponsor"
+            role: sponsor
+            amount: 8000000
+        },
+        {
+            partyId: "https://example.com/parties/bank-lender"
+            role: lender
+            amount: 12000000
+        }
+    ]
+    
+    // Single office building asset
+    assets: [
+        asset OfficeBuilding {
+            id: "https://example.com/assets/office-building-main"
+            name: "Main Office Building"
+            dealId: "https://example.com/deals/office-building-123"
+            category: real_estate
+            description: "200,000 SF Class A office space"
+            
+            location: {
+                address: {
+                    street_address: "123 Business Way"
+                    city: "Metro City"
+                    state: "CA"
+                    postal_code: "90210"
+                    country: "USA"
+                }
+                market: "Downtown Metro City"
+                timezone: "America/Los_Angeles"
+            }
+            
+            attributes: {
+                totalSqFt: 200000
+                yearBuilt: 2020
+                occupancyRate: 0.95
+                avgRentPSF: 45.00
+            }
+            
+            stateConfig: {
+                allowedStates: ["operational", "non_operational"]
+                initialState: "operational"
+            }
+            
+            // Asset-level cash flow streams
+            streams: [
+                // Rental Income - Monthly recurring
+                stream RentalIncome {
+                    id: "https://example.com/streams/rental-income"
+                    name: "Rental Income"
+                    description: "Monthly rental income from office tenants"
+                    scope: asset
+                    category: Revenue
+                    subType: Operating
+                    
+                    schedule: {
+                        type: recurring
+                        startDate: 2024-01-01
+                        recurrenceRule: {
+                            freq: MONTHLY
+                            interval: 1
+                        }
+                    }
+                    
+                    amount: 750000  // Monthly base rent
+                    
+                    growth: {
+                        type: fixed
+                        rate: 0.025  // 2.5% annual rent growth
+                    }
+                    
+                    tags: ["GAAP", "Forecast", "NOI"]
+                },
+                
+                // Property Management Expenses
+                stream PropertyMgmt {
+                    id: "https://example.com/streams/property-mgmt"
+                    name: "Property Management"
+                    description: "Monthly property management and maintenance expenses"
+                    scope: asset
+                    category: Expense
+                    subType: Operating
+                    
+                    schedule: {
+                        type: recurring
+                        startDate: 2024-01-01
+                        recurrenceRule: {
+                            freq: MONTHLY
+                            interval: 1
+                        }
+                    }
+                    
+                    amount: 45000  // Monthly operating expenses
+                    
+                    growth: {
+                        type: fixed
+                        rate: 0.03  // 3% annual expense growth
+                    }
+                    
+                    tags: ["GAAP", "Forecast", "OpEx"]
+                }
+            ]
+        }
+    ]
+    
+    // Deal-level streams
+    streams: [
+        // Debt Service - Monthly loan payments
+        stream DebtService {
+            id: "https://example.com/streams/debt-service"
+            name: "Debt Service"
+            description: "Monthly principal and interest payments"
+            scope: deal
+            category: Expense
+            subType: Financing
+            
+            schedule: {
+                type: recurring
+                startDate: 2024-01-01
+                recurrenceRule: {
+                    freq: MONTHLY
+                    interval: 1
+                }
+            }
+            
+            // Using loan payment calculator
+            amount: {
+                loanPayment: {
+                    principal: 12000000
+                    rate: 0.065  // 6.5% annual interest rate
+                    termMonths: 300  // 25-year amortization
+                }
+            }
+            
+            tags: ["GAAP", "Forecast", "Debt"]
+        },
+        
+        // Exit Proceeds - One-time at disposition
+        stream ExitProceeds {
+            id: "https://example.com/streams/exit-proceeds"
+            name: "Exit Proceeds"
+            description: "Net proceeds from property sale"
+            scope: deal
+            category: Revenue
+            subType: Other
+            
+            schedule: {
+                type: oneTime
+                date: 2029-01-15
+            }
+            
+            amount: 22000000  // Expected sale price
+            
+            tags: ["GAAP", "Forecast", "Exit"]
+        }
+    ]
+    
+    stateConfig: {
+        allowedStates: ["active", "disposition", "closed"]
+        initialState: "active"
+    }
+}

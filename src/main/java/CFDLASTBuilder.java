@@ -84,12 +84,36 @@ public class CFDLASTBuilder extends cfdlBaseVisitor<ASTNode> {
     
     // Property processing methods
     private void processDealProperty(DealNode deal, cfdlParser.DealPropertyContext ctx) {
-        if (ctx.getText().startsWith("name:")) {
-            String name = extractStringValue(ctx);
-            deal.setName(name);
-        } else if (ctx.getText().startsWith("dealType:")) {
-            String dealType = extractEnumValue(ctx);
+        if (ctx.STRING() != null) {
+            // Handle string properties like name, currency, etc.
+            String value = ctx.STRING().getText();
+            // Remove quotes
+            if (value.startsWith("\"") && value.endsWith("\"")) {
+                value = value.substring(1, value.length() - 1);
+            }
+            String propertyName = ctx.getChild(0).getText();
+            if (propertyName.equals("name")) {
+                deal.setName(value);
+            } else if (propertyName.equals("currency")) {
+                deal.setCurrency(value);
+            } else if (propertyName.equals("entryDate")) {
+                deal.setEntryDate(value);
+            } else if (propertyName.equals("exitDate")) {
+                deal.setExitDate(value);
+            } else if (propertyName.equals("analysisStart")) {
+                deal.setAnalysisStart(value);
+            }
+        } else if (ctx.dealTypeValue() != null) {
+            // Handle dealType enum
+            String dealType = ctx.dealTypeValue().getText();
             deal.setDealType(dealType);
+        } else if (ctx.NUMBER() != null) {
+            // Handle numeric properties
+            String propertyName = ctx.getChild(0).getText();
+            Double value = Double.parseDouble(ctx.NUMBER().getText());
+            if (propertyName.equals("holdingPeriodYears")) {
+                deal.setHoldingPeriodYears(value);
+            }
         } else {
             // Handle other properties...
             processGenericProperty(deal, ctx.getText());
@@ -97,62 +121,105 @@ public class CFDLASTBuilder extends cfdlBaseVisitor<ASTNode> {
     }
     
     private void processAssetProperty(AssetNode asset, cfdlParser.AssetPropertyContext ctx) {
-        String text = ctx.getText();
-        if (text.startsWith("name:")) {
-            String name = extractStringValue(ctx);
-            asset.setName(name);
-        } else if (text.startsWith("category:")) {
-            String category = extractEnumValue(ctx);
+        if (ctx.STRING() != null) {
+            // Handle string properties
+            String value = ctx.STRING().getText();
+            // Remove quotes
+            if (value.startsWith("\"") && value.endsWith("\"")) {
+                value = value.substring(1, value.length() - 1);
+            }
+            String propertyName = ctx.getChild(0).getText();
+            if (propertyName.equals("name")) {
+                asset.setName(value);
+            } else if (propertyName.equals("description")) {
+                asset.setDescription(value);
+            }
+        } else if (ctx.assetCategoryValue() != null) {
+            // Handle category enum
+            String category = ctx.assetCategoryValue().getText();
             asset.setCategory(category);
+        } else if (ctx.assetStateValue() != null) {
+            // Handle state enum
+            String state = ctx.assetStateValue().getText();
+            asset.setState(state);
         } else {
-            processGenericProperty(asset, text);
+            // Handle other properties using generic traversal
+            String text = ctx.getText();
+            if (text.startsWith("dealId:")) {
+                // Extract identifier value after colon
+                for (int i = 0; i < ctx.getChildCount(); i++) {
+                    ParseTree child = ctx.getChild(i);
+                    if (child instanceof TerminalNode) {
+                        TerminalNode terminal = (TerminalNode) child;
+                        String termText = terminal.getText();
+                        if (!termText.equals("dealId") && !termText.equals(":") && !termText.equals(";")) {
+                            asset.setDealId(termText);
+                            break;
+                        }
+                    }
+                }
+            } else {
+                processGenericProperty(asset, text);
+            }
         }
     }
     
     private void processStreamProperty(StreamNode stream, cfdlParser.StreamPropertyContext ctx) {
-        String text = ctx.getText();
-        if (text.startsWith("name:")) {
-            String name = extractStringValue(ctx);
-            stream.setName(name);
-        } else if (text.startsWith("scope:")) {
-            String scope = extractEnumValue(ctx);
+        if (ctx.STRING() != null) {
+            // Handle string properties
+            String value = ctx.STRING().getText();
+            // Remove quotes
+            if (value.startsWith("\"") && value.endsWith("\"")) {
+                value = value.substring(1, value.length() - 1);
+            }
+            String propertyName = ctx.getChild(0).getText();
+            if (propertyName.equals("name")) {
+                stream.setName(value);
+            }
+        } else if (ctx.componentScopeValue() != null) {
+            // Handle scope enum
+            String scope = ctx.componentScopeValue().getText();
             stream.setScope(scope);
+        } else if (ctx.streamCategoryValue() != null) {
+            // Handle category enum
+            String category = ctx.streamCategoryValue().getText();
+            stream.setCategory(category);
+        } else if (ctx.streamSubTypeValue() != null) {
+            // Handle subType enum
+            String subType = ctx.streamSubTypeValue().getText();
+            stream.setSubType(subType);
+        } else if (ctx.amountTypeValue() != null) {
+            // Handle amountType enum
+            String amountType = ctx.amountTypeValue().getText();
+            stream.setAmountType(amountType);
+        } else if (ctx.NUMBER() != null) {
+            // Handle numeric properties like amount
+            Double amount = Double.parseDouble(ctx.NUMBER().getText());
+            stream.setAmount(amount);
         } else {
-            processGenericProperty(stream, text);
+            // Handle other properties using generic traversal
+            String text = ctx.getText();
+            if (text.startsWith("schedule:")) {
+                // Extract identifier value after colon
+                for (int i = 0; i < ctx.getChildCount(); i++) {
+                    ParseTree child = ctx.getChild(i);
+                    if (child instanceof TerminalNode) {
+                        TerminalNode terminal = (TerminalNode) child;
+                        String termText = terminal.getText();
+                        if (!termText.equals("schedule") && !termText.equals(":") && !termText.equals(";")) {
+                            stream.setScheduleId(termText);
+                            break;
+                        }
+                    }
+                }
+            } else {
+                processGenericProperty(stream, text);
+            }
         }
     }
     
-    // Utility methods for extracting values from parse tree
-    private String extractStringValue(ParseTree ctx) {
-        // Find STRING terminal and remove quotes
-        for (int i = 0; i < ctx.getChildCount(); i++) {
-            ParseTree child = ctx.getChild(i);
-            if (child instanceof TerminalNode) {
-                TerminalNode terminal = (TerminalNode) child;
-                String text = terminal.getText();
-                if (text.startsWith("\"") && text.endsWith("\"")) {
-                    return text.substring(1, text.length() - 1);
-                }
-            }
-        }
-        return null;
-    }
-    
-    private String extractEnumValue(ParseTree ctx) {
-        // Find enum terminal and return without quotes
-        for (int i = 0; i < ctx.getChildCount(); i++) {
-            ParseTree child = ctx.getChild(i);
-            if (child instanceof TerminalNode) {
-                TerminalNode terminal = (TerminalNode) child;
-                String text = terminal.getText();
-                // Enum values should not have quotes
-                if (!text.equals(":") && !text.equals(";")) {
-                    return text;
-                }
-            }
-        }
-        return null;
-    }
+    // These utility methods are no longer needed since we're using the specific context methods
+    // Removed extractStringValue and extractEnumValue methods
     
     private void processGenericProperty(ASTNode node, String propertyText) {
         // Handle generic property assignment

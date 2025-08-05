@@ -1,8 +1,6 @@
 grammar cfdl;
 
-@header {
-  package dev.cfdl.parser;
-}
+// Remove package declaration to use default package
 
 options {
   language = Java;
@@ -121,7 +119,7 @@ metricDefinition
 // Deal properties
 dealProperty
     : 'name' ':' STRING ';'
-    | 'dealType' ':' DEAL_TYPE ';' 
+    | 'dealType' ':' dealTypeValue ';' 
     | 'entryDate' ':' STRING ';'  // Date string
     | 'exitDate' ':' STRING ';'
     | 'analysisStart' ':' STRING ';'
@@ -132,16 +130,50 @@ dealProperty
     | genericProperty
     ;
 
+dealTypeValue
+    : 'commercial_real_estate'
+    | 'residential_real_estate'
+    | 'financial_instrument'
+    | 'syndicated_loan'
+    | 'private_credit'
+    | 'litigation_finance'
+    | 'royalty_stream'
+    | 'infrastructure_project'
+    | 'renewable_energy_project'
+    | 'equipment_leasing'
+    | 'art_and_collectibles'
+    | 'business_acquisition'
+    | 'deal_other'
+    ;
+
 // Asset properties  
 assetProperty
     : 'name' ':' STRING ';'
     | 'dealId' ':' IDENTIFIER ';'
-    | 'category' ':' ASSET_CATEGORY ';'
+    | 'category' ':' assetCategoryValue ';'
     | 'description' ':' STRING ';'
     | 'components' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']' ';'
     | 'streams' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']' ';'
-    | 'state' ':' ASSET_STATE ';'
+    | 'state' ':' assetStateValue ';'
     | genericProperty
+    ;
+
+assetCategoryValue
+    : 'real_estate'
+    | 'financial_asset'
+    | 'physical_asset'
+    | 'legal_right'
+    | 'operating_entity'
+    | 'contract_bundle'
+    | 'mixed'
+    | 'asset_other'
+    ;
+
+assetStateValue
+    : 'pre_operational'
+    | 'operational'
+    | 'non_operational'
+    | 'disposed'
     ;
 
 // Component properties
@@ -156,13 +188,43 @@ componentProperty
 // Stream properties
 streamProperty
     : 'name' ':' STRING ';'
-    | 'scope' ':' COMPONENT_SCOPE ';'
-    | 'category' ':' STREAM_CATEGORY ';'
-    | 'subType' ':' STREAM_SUB_TYPE ';' 
+    | 'scope' ':' componentScopeValue ';'
+    | 'category' ':' streamCategoryValue ';'
+    | 'subType' ':' streamSubTypeValue ';' 
     | 'schedule' ':' IDENTIFIER ';'
     | 'amount' ':' (NUMBER | IDENTIFIER) ';'
-    | 'amountType' ':' AMOUNT_TYPE ';'
+    | 'amountType' ':' amountTypeValue ';'
     | genericProperty
+    ;
+
+componentScopeValue
+    : 'component'
+    | 'asset'
+    | 'deal'
+    | 'portfolio'
+    | 'fund'
+    ;
+
+streamCategoryValue
+    : 'Revenue'
+    | 'Expense'
+    | 'OtherIncome'
+    ;
+
+streamSubTypeValue
+    : 'Operating'
+    | 'Financing'
+    | 'Tax'
+    | 'CapEx'
+    | 'Fee'
+    | 'Other'
+    ;
+
+amountTypeValue
+    : 'amount_fixed'
+    | 'amount_expression'
+    | 'amount_distribution'
+    | 'randomWalk'
     ;
 
 // Assumption properties

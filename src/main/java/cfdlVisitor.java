@@ -1,7 +1,4 @@
 // Generated from cfdl.g4 by ANTLR 4.13.1
-
-  package dev.cfdl.parser;
-
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -139,11 +136,29 @@ public interface cfdlVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDealProperty(cfdlParser.DealPropertyContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link cfdlParser#dealTypeValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDealTypeValue(cfdlParser.DealTypeValueContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link cfdlParser#assetProperty}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitAssetProperty(cfdlParser.AssetPropertyContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link cfdlParser#assetCategoryValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssetCategoryValue(cfdlParser.AssetCategoryValueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link cfdlParser#assetStateValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssetStateValue(cfdlParser.AssetStateValueContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link cfdlParser#componentProperty}.
 	 * @param ctx the parse tree
@@ -156,6 +171,30 @@ public interface cfdlVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStreamProperty(cfdlParser.StreamPropertyContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link cfdlParser#componentScopeValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitComponentScopeValue(cfdlParser.ComponentScopeValueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link cfdlParser#streamCategoryValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStreamCategoryValue(cfdlParser.StreamCategoryValueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link cfdlParser#streamSubTypeValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStreamSubTypeValue(cfdlParser.StreamSubTypeValueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link cfdlParser#amountTypeValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAmountTypeValue(cfdlParser.AmountTypeValueContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link cfdlParser#assumptionProperty}.
 	 * @param ctx the parse tree

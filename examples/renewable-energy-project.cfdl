@@ -1,0 +1,372 @@
+// CFDL Example 3: Renewable Energy Project Deal
+// This example demonstrates an infrastructure deal with complex
+// growth models, tax benefits, and regulatory considerations
+
+deal SolarFarm_Nevada {
+    id: "https://example.com/deals/solar-farm-nevada-2024"
+    name: "Desert Solar Farm Project"
+    description: "100MW utility-scale solar photovoltaic project with 25-year PPA"
+    dealType: renewable_energy_project
+    currency: "USD"
+    
+    entryDate: 2024-06-01
+    exitDate: 2049-12-31
+    analysisStart: 2024-01-01
+    holdingPeriodYears: 25
+    
+    calendar: {
+        frequency: monthly
+        businessDayConvention: preceding
+        dayCount: actual/365
+        holidayCalendar: "US"
+    }
+    
+    participants: [
+        {
+            partyId: "https://example.com/parties/green-energy-sponsor"
+            role: sponsor
+            amount: 35000000
+        },
+        {
+            partyId: "https://example.com/parties/construction-lender"
+            role: lender
+            amount: 85000000
+        },
+        {
+            partyId: "https://example.com/parties/tax-equity-investor"
+            role: equity
+            amount: 40000000
+        }
+    ]
+    
+    assets: [
+        asset SolarArray {
+            id: "https://example.com/assets/solar-array-main"
+            name: "Main Solar Array"
+            dealId: "https://example.com/deals/solar-farm-nevada-2024"
+            category: physical_asset
+            description: "100MW DC solar photovoltaic array with tracking systems"
+            
+            location: {
+                address: {
+                    street_address: "Mile Marker 47, Highway 95"
+                    city: "Searchlight"
+                    state: "NV"
+                    postal_code: "89046"
+                    country: "USA"
+                }
+                latitude: 35.4647
+                longitude: -114.9189
+                market: "CAISO"
+                timezone: "America/Los_Angeles"
+            }
+            
+            attributes: {
+                capacity_mw_dc: 100
+                capacity_mw_ac: 80
+                panel_count: 312500
+                annual_degradation_rate: 0.005
+                project_life_years: 25
+                interconnection_voltage: "138kV"
+            }
+            
+            stateConfig: {
+                allowedStates: ["pre_operational", "operational", "non_operational"]
+                initialState: "pre_operational"
+            }
+            
+            streams: [
+                // Power Purchase Agreement Revenue
+                stream PPA_Revenue {
+                    id: "https://example.com/streams/ppa-revenue"
+                    name: "PPA Revenue"
+                    description: "Monthly revenue from utility power purchase agreement"
+                    scope: asset
+                    category: Revenue
+                    subType: Operating
+                    
+                    schedule: {
+                        type: recurring
+                        startDate: 2024-12-01  // COD date
+                        recurrenceRule: {
+                            freq: MONTHLY
+                            interval: 1
+                        }
+                    }
+                    
+                    amount: 625000  // Monthly PPA revenue ($0.065/kWh * ~9.6M kWh/month)
+                    
+                    growth: {
+                        type: expression
+                        expr: "base_amount * (1 + escalation_rate)^year * (1 - degradation_rate)^year"
+                        // PPA has 2% annual escalation but 0.5% annual degradation
+                    }
+                    
+                    tags: ["GAAP", "Forecast", "PPA", "Revenue"]
+                },
+                
+                // Renewable Energy Credits (RECs)
+                stream REC_Revenue {
+                    id: "https://example.com/streams/rec-revenue"
+                    name: "REC Revenue"
+                    description: "Quarterly renewable energy credit sales"
+                    scope: asset
+                    category: Revenue
+                    subType: Operating
+                    
+                    schedule: {
+                        type: recurring
+                        startDate: 2024-12-31
+                        recurrenceRule: {
+                            freq: MONTHLY
+                            interval: 3  // Quarterly
+                        }
+                    }
+                    
+                    amount: 96000  // Quarterly REC revenue (~$8/MWh)
+                    
+                    growth: {
+                        type: distribution
+                        distribution: {
+                            type: "normal"
+                            mean: 0.03  // 3% average growth
+                            std_dev: 0.10  // 10% volatility
+                        }
+                    }
+                    
+                    tags: ["GAAP", "Forecast", "REC", "Green"]
+                },
+                
+                // Operations & Maintenance
+                stream O_M_Costs {
+                    id: "https://example.com/streams/o-m-costs"
+                    name: "O&M Costs"
+                    description: "Monthly operations and maintenance expenses"
+                    scope: asset
+                    category: Expense
+                    subType: Operating
+                    
+                    schedule: {
+                        type: recurring
+                        startDate: 2024-12-01
+                        recurrenceRule: {
+                            freq: MONTHLY
+                            interval: 1
+                        }
+                    }
+                    
+                    amount: 85000  // Monthly O&M costs (~$10/kW-year)
+                    
+                    growth: {
+                        type: fixed
+                        rate: 0.025  // 2.5% annual escalation
+                    }
+                    
+                    tags: ["GAAP", "Forecast", "OpEx", "O&M"]
+                }
+            ]
+        }
+    ]
+    
+    streams: [
+        // Construction/Term Debt Service  
+        stream ProjectDebt {
+            id: "https://example.com/streams/project-debt"
+            name: "Project Debt Service"
+            description: "Monthly debt service on project financing"
+            scope: deal
+            category: Expense
+            subType: Financing
+            
+            schedule: {
+                type: recurring
+                startDate: 2024-12-01  // Starts at COD
+                recurrenceRule: {
+                    freq: MONTHLY
+                    interval: 1
+                }
+            }
+            
+            amount: {
+                loanPayment: {
+                    principal: 85000000
+                    rate: 0.068  // 6.8% project finance rate
+                    termMonths: 240  // 20-year term
+                }
+            }
+            
+            tags: ["GAAP", "Forecast", "ProjectDebt"]
+        },
+        
+        // Insurance - Annual premium  
+        stream Insurance {
+            id: "https://example.com/streams/insurance"
+            name: "Project Insurance"
+            description: "Annual comprehensive project insurance premium"
+            scope: deal
+            category: Expense
+            subType: Operating
+            
+            schedule: {
+                type: recurring
+                startDate: 2024-06-01
+                recurrenceRule: {
+                    freq: YEARLY
+                    interval: 1
+                }
+            }
+            
+            amount: 450000  // Annual premium
+            
+            growth: {
+                type: fixed
+                rate: 0.04  // 4% annual growth
+            }
+            
+            tags: ["GAAP", "Forecast", "Insurance"]
+        },
+        
+        // Land Lease Payments
+        stream LandLease {
+            id: "https://example.com/streams/land-lease"
+            name: "Land Lease Payments"
+            description: "Annual land lease payments to property owner"
+            scope: deal
+            category: Expense
+            subType: Operating
+            
+            schedule: {
+                type: recurring
+                startDate: 2024-06-01
+                recurrenceRule: {
+                    freq: YEARLY
+                    interval: 1
+                }
+            }
+            
+            amount: 125000  // Annual land lease
+            
+            growth: {
+                type: fixed
+                rate: 0.02  // 2% annual escalation
+            }
+            
+            tags: ["GAAP", "Forecast", "LandLease"]
+        },
+        
+        // Investment Tax Credit - One-time benefit
+        stream ITC_Benefit {
+            id: "https://example.com/streams/itc-benefit"
+            name: "Investment Tax Credit"
+            description: "30% federal investment tax credit benefit"
+            scope: deal
+            category: Revenue
+            subType: Tax
+            
+            schedule: {
+                type: oneTime
+                date: 2024-12-31  // Year of COD
+            }
+            
+            amount: 48000000  // 30% of $160M project cost
+            
+            tags: ["Tax", "Forecast", "ITC", "Federal"]
+        },
+        
+        // MACRS Depreciation - Annual tax benefit (simplified)
+        stream MACRS_Depreciation {
+            id: "https://example.com/streams/macrs-depreciation"
+            name: "MACRS Depreciation"
+            description: "Annual MACRS depreciation tax benefits"
+            scope: deal
+            category: Revenue
+            subType: Tax
+            
+            schedule: {
+                type: dateBounded
+                startDate: 2024-12-31
+                endDate: 2029-12-31  // 5-year MACRS schedule
+                recurrenceRule: {
+                    freq: YEARLY
+                    interval: 1
+                }
+            }
+            
+            amount: {
+                straightLineDepreciation: {
+                    cost: 160000000  // Total project cost
+                    salvage: 16000000  // 10% residual value
+                    lifePeriods: 5  // 5-year MACRS
+                }
+            }
+            
+            tags: ["Tax", "Forecast", "MACRS", "Depreciation"]
+        },
+        
+        // Major Maintenance Reserve - Quarterly funding
+        stream MaintenanceReserve {
+            id: "https://example.com/streams/maintenance-reserve"
+            name: "Major Maintenance Reserve"
+            description: "Quarterly contributions to major maintenance reserve account"
+            scope: deal
+            category: Expense
+            subType: Operating
+            
+            schedule: {
+                type: recurring
+                startDate: 2024-12-31
+                recurrenceRule: {
+                    freq: MONTHLY
+                    interval: 3  // Quarterly
+                }
+            }
+            
+            amount: 62500  // Quarterly reserve funding
+            
+            tags: ["GAAP", "Forecast", "Reserve", "Maintenance"]
+        },
+        
+        // Inverter Replacement - Mid-life CapEx
+        stream InverterReplacement {
+            id: "https://example.com/streams/inverter-replacement"
+            name: "Inverter Replacement"
+            description: "Mid-life inverter replacement capital expenditure"
+            scope: deal
+            category: Expense
+            subType: CapEx
+            
+            schedule: {
+                type: oneTime
+                date: 2037-06-01  // Year 13 replacement
+            }
+            
+            amount: 8000000  // Inverter replacement cost
+            
+            tags: ["GAAP", "Forecast", "CapEx", "Inverter"]
+        },
+        
+        // Project Sale/Refinancing - End of tax equity period
+        stream ProjectRefinance {
+            id: "https://example.com/streams/project-refinance"
+            name: "Project Refinancing"
+            description: "Refinancing proceeds after tax equity flip"
+            scope: deal  
+            category: Revenue
+            subType: Financing
+            
+            schedule: {
+                type: oneTime
+                date: 2030-12-31  // End of tax equity period
+            }
+            
+            amount: 45000000  // Refinancing proceeds
+            
+            tags: ["GAAP", "Forecast", "Refinance"]
+        }
+    ]
+    
+    stateConfig: {
+        allowedStates: ["development", "construction", "operational", "refinanced", "disposed"]
+        initialState: "development"
+    }
+}

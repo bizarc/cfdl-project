@@ -2,11 +2,13 @@
 /Users/matthewmccrea/code/cfdl-project/src/main/java/cfdlParser.java
 /Users/matthewmccrea/code/cfdl-project/src/main/java/dev/cfdl/ast/AssetNode.java
 /Users/matthewmccrea/code/cfdl-project/src/main/java/dev/cfdl/ast/ValidationError.java
-/Users/matthewmccrea/code/cfdl-project/src/main/java/cfdlBaseListener.java
 /Users/matthewmccrea/code/cfdl-project/src/main/java/dev/cfdl/ast/ASTNode.java
 /Users/matthewmccrea/code/cfdl-project/src/main/java/cfdlVisitor.java
+/Users/matthewmccrea/code/cfdl-project/src/main/java/dev/cfdl/ast/StreamNode.java
+/Users/matthewmccrea/code/cfdl-project/src/main/java/dev/cfdl/ast/DealNode.java
+/Users/matthewmccrea/code/cfdl-project/src/main/java/CFDLParserMain.java
+/Users/matthewmccrea/code/cfdl-project/src/main/java/cfdlBaseListener.java
+/Users/matthewmccrea/code/cfdl-project/src/main/java/dev/cfdl/validation/SchemaValidator.java
 /Users/matthewmccrea/code/cfdl-project/src/main/java/CFDLASTBuilder.java
 /Users/matthewmccrea/code/cfdl-project/src/main/java/cfdlListener.java
 /Users/matthewmccrea/code/cfdl-project/src/main/java/cfdlBaseVisitor.java
-/Users/matthewmccrea/code/cfdl-project/src/main/java/dev/cfdl/ast/StreamNode.java
-/Users/matthewmccrea/code/cfdl-project/src/main/java/dev/cfdl/ast/DealNode.java

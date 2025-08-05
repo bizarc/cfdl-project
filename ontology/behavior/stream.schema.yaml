@@ -92,7 +92,7 @@ properties:
 required:
   - id
   - name
-  - level
+  - scope
   - category
   - schedule
   - amount
