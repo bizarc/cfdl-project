@@ -1,0 +1,67 @@
+module CFDLEngine
+
+using JSON3
+using Random
+using Dates
+using Statistics
+using Distributions
+using StatsBase
+
+# Include common enums first
+include("common_enums.jl")
+
+# Export main functions and types
+export MonteCarloEngine, run_monte_carlo, load_ir, sample_variables
+export StochasticParameter, FixedParameter, DistributionParameter, RandomWalkParameter
+export IRData, TrialResult, MonteCarloResult
+export sample_parameter, generate_trial_seed, create_trial_rng, save_results, evolve_random_walk
+export TimePeriod, TemporalGrid, generate_temporal_grid, summarize_grid
+export parse_date, calculate_period_end, is_business_day, adjust_for_business_day
+export calculate_year_fraction, generate_periods, count_business_days
+export get_period_by_date, get_periods_in_range
+export StreamAllocation, AllocationResult, allocate_streams, summarize_allocation_result
+export CashFlowView  # Alias for ReportingFrequency
+export HierarchicalCashFlow, AggregatedCashFlow, CashFlowAggregationResult
+export aggregate_cash_flows, format_cash_flow_result, summarize_aggregation_result
+export StreamGroup, HierarchicalStreamGroups, TemporalStreamGroups, GroupedStreams
+export collect_streams, summarize_grouped_streams
+
+# Export common enums
+export CashFlowCategory, OPERATING, FINANCING, INVESTING, TAX_RELATED
+export StatementView, GAAP, NON_GAAP, TAX, MANAGEMENT
+export ReportingFrequency, MONTHLY, QUARTERLY, ANNUAL, CUMULATIVE
+export EntityType, DEAL, ASSET, COMPONENT, STREAM
+export ProcessingStage, STREAM_COLLECTION, CASH_FLOW_ASSEMBLY, OPERATING_STATEMENT_GENERATION, FINANCING_ADJUSTMENTS, TAX_PROCESSING, AVAILABLE_CASH_CALCULATION, STATEMENT_VIEWS
+export ValidationSeverity, INFO, WARNING, ERROR, CRITICAL
+
+# Export modular cash flow pipeline functions
+export CashFlowEntry, assemble_cash_flows, categorize_cash_flows, summarize_cash_flow_entries
+export OperatingStatement, generate_operating_statements, calculate_noi, calculate_noi_metrics
+export FinancingAdjustment, apply_financing_adjustments, calculate_debt_metrics
+export TaxAdjustment, calculate_tax_adjustments, apply_final_tax_adjustments, calculate_tax_metrics
+export AvailableCashCalculation, calculate_available_cash, apply_distribution_policy, calculate_distribution_metrics
+export FinancialStatement, generate_statement_views, aggregate_to_annual, summarize_statement_views
+
+# Include component modules
+include("types.jl")
+include("ir_loader.jl")
+include("temporal_grid.jl")
+include("stream_allocator.jl")
+include("stream_collector.jl")
+
+# Include modular cash flow pipeline stages
+include("cash_flow_assembly.jl")
+include("operating_statement.jl")
+include("financing_adjustments.jl")
+include("tax_processing.jl")
+include("available_cash.jl")
+include("statement_views.jl")
+
+# Include main aggregator (uses the modular stages)
+include("cash_flow_aggregator.jl")
+
+# Include analysis modules
+include("monte_carlo.jl")
+include("sampling.jl")
+
+end # module CFDLEngine

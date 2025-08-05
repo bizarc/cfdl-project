@@ -28,14 +28,41 @@ This document outlines the roadmap for building a minimum viable CFDL v1.2 demo,
 
 ---
 
-## 2. Engine Prototype (Julia or Other)
+## 2. 🔄 Engine Prototype (Julia) [IN PROGRESS]
 
-1. **Time-Series Grid Generator**  
-2. **Stream Allocator & Temporal Resolution**  
-3. **Cash-Flow Aggregator & View Filtering**  
-4. **Metrics Library (NPV, IRR, DSCR, MOIC, Payback, eNPV, eIRR)**  
-5. **Waterfall Distributor**  
-6. **Monte Carlo Harness**
+**Updated Architecture**: Monte Carlo as orchestrating framework
+
+1. **Monte Carlo Harness** ✅ COMPLETED  
+   - ✅ Trial orchestration (deterministic: 1 trial, stochastic: N trials)
+   - ✅ Stochastic variable sampling framework (Normal, Uniform, LogNormal, Random Walk)
+   - ✅ Seed management and result traceability
+   - ✅ Comprehensive testing (31 passing tests)
+   - ⏳ Parallel trial execution (sequential fallback implemented)
+
+2. **Temporal Grid Generator** ✅ COMPLETED  
+   - ✅ Multi-frequency support (daily, weekly, monthly, quarterly, annual)
+   - ✅ Business day conventions (following, preceding, modified-following)
+   - ✅ Holiday calendars (US federal holidays, UK bank holidays)
+   - ✅ Day count conventions (Actual/365, 30/360, Actual/Actual)
+   - ✅ Comprehensive testing (67 passing tests)
+
+3. **Stream Allocator & Logic Block Engine**  
+   - Growth factor application (potentially stochastic)
+   - Logic block execution for custom overrides
+   - Real options capability (dynamic model modification)
+
+4. **Hierarchical Cash-Flow Aggregator**  
+   - Monthly detailed view + Annual statement views
+   - Drill-down capability: Deal → Asset → Component → Stream
+   - Revenue aggregation with source tracking
+
+5. **Metrics Library (NPV, IRR, DSCR, MOIC, Payback, eNPV, eIRR)**  
+   - Multi-level metric calculations
+   - Stochastic distributions support
+
+6. **Waterfall Distributor**  
+   - Sequential tier processing with condition evaluation
+   - Capital-stack inheritance and explicit splits
 
 ---
 
@@ -43,7 +70,7 @@ This document outlines the roadmap for building a minimum viable CFDL v1.2 demo,
 
 - Auto-generate forms from JSON-Schema.  
 - Node-link canvas for deals/assets/components/streams.  
-- Round-trip editing and “Export CFDL” functionality.
+- Round-trip editing and "Export CFDL" functionality.
 
 ---
 
@@ -63,5 +90,6 @@ This document outlines the roadmap for building a minimum viable CFDL v1.2 demo,
 
 ---
 
-*Next Steps:*  
-- Begin with **Step 1.1: Load & Validate Schemas** in the pipeline.
+*Current Progress:*  
+- ✅ **Task 1**: DSL Compilation Pipeline completed
+- 🔄 **Task 2**: Engine Prototype - Sub-tasks 2.1-2.3 completed, implementing 2.4 (Cash Flow Aggregator)

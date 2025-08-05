@@ -1,0 +1,81 @@
+{
+  "deal": {
+    "id": "demo_deal_001",
+    "name": "Demo Commercial Real Estate Deal",
+    "currency": "USD",
+    "entryDate": "2024-01-15",
+    "exitDate": "2029-01-15"
+  },
+  "calendar": {
+    "frequency": "monthly",
+    "businessDayConvention": "following",
+    "dayCount": "actual/365"
+  },
+  "assets": [
+    {
+      "id": "office_building_001",
+      "name": "Downtown Office Building",
+      "category": "real_estate"
+    }
+  ],
+  "components": [],
+  "streams": [
+    {
+      "id": "rental_income_stream",
+      "name": "Rental Income",
+      "category": "Revenue",
+      "subType": "Operating",
+      "amount": 120000.0,
+      "growth": {
+        "type": "fixed",
+        "rate": 0.025
+      }
+    },
+    {
+      "id": "operating_expenses_stream", 
+      "name": "Operating Expenses",
+      "category": "Expense",
+      "subType": "Operating",
+      "amount": 35000.0,
+      "growth": {
+        "type": "distribution",
+        "distribution": {
+          "type": "Normal",
+          "mean": 0.03,
+          "std": 0.01
+        }
+      }
+    }
+  ],
+  "assumptions": {
+    "rent_growth_rate": {
+      "type": "Normal",
+      "mean": 0.03,
+      "std": 0.01
+    },
+    "vacancy_rate": {
+      "type": "Uniform",
+      "min": 0.02,
+      "max": 0.08
+    },
+    "interest_rate": 0.045,
+    "inflation_rate": {
+      "type": "RandomWalk",
+      "initial_value": 0.025,
+      "drift": 0.001,
+      "volatility": 0.005
+    }
+  },
+  "logic_blocks": [],
+  "waterfall": {
+    "id": "simple_waterfall",
+    "description": "Basic preferred return waterfall",
+    "tiers": [
+      {
+        "id": "preferred_return",
+        "description": "8% preferred return to equity",
+        "prefRate": 0.08
+      }
+    ]
+  }
+}
