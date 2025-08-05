@@ -70,7 +70,7 @@ function collect_streams(ir_data::IRData, allocation_result::AllocationResult, g
     
     # Calculate totals
     total_streams = length(allocation_result.allocations)
-    total_amount = sum(alloc.adjusted_amount for alloc in allocation_result.allocations)
+    total_amount = isempty(allocation_result.allocations) ? 0.0 : sum(alloc.adjusted_amount for alloc in allocation_result.allocations)
     
     # Determine period range
     if !isempty(grid.periods)

@@ -414,3 +414,12 @@ function validate_tax_adjustment(adjustment::TaxAdjustment)::Dict{String, Any}
         "validation_timestamp" => now()
     )
 end
+
+"""
+    calculate_effective_tax_rate(taxable_income::Float64, total_tax::Float64) -> Float64
+
+Calculate the effective tax rate given taxable income and total tax.
+"""
+function calculate_effective_tax_rate(taxable_income::Float64, total_tax::Float64)::Float64
+    return taxable_income != 0.0 ? total_tax / taxable_income : 0.0
+end

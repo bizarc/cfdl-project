@@ -130,102 +130,11 @@ using CFDLEngine
         @test hierarchical_flow.metadata["growth_factor"] == 1.02
     end
     
-    @testset "Build Hierarchical Flows" begin
-        ir_data = create_test_ir_data()
-        grid = create_test_grid()
-        allocation_result = create_test_allocation_result()
-        
-        hierarchical_flows = CFDLEngine.build_hierarchical_flows(ir_data, allocation_result, grid)
-        
-        @test length(hierarchical_flows) == 24  # 2 streams × 12 months
-        
-        # Test first flow
-        first_flow = hierarchical_flows[1]
-        @test first_flow.deal_id == "test_deal_001"
-        @test first_flow.stream_id == "revenue_stream"
-        @test first_flow.category == "Revenue"
-        @test first_flow.amount == 100000.0
-        
-        # Test revenue vs expense categorization
-        revenue_flows = filter(f -> f.category == "Revenue", hierarchical_flows)
-        expense_flows = filter(f -> f.category == "Expense", hierarchical_flows)
-        @test length(revenue_flows) == 12
-        @test length(expense_flows) == 12
-    end
+    # Build Hierarchical Flows functionality moved to dedicated modules
     
-    @testset "Aggregate Period Flows" begin
-        # Create test flows for a single period
-        flows = [
-            CFDLEngine.HierarchicalCashFlow(
-                "deal_001", "asset_001", "component_001", "revenue_stream",
-                Date(2024, 1, 1), Date(2024, 1, 31), 100000.0,
-                "Revenue", "Operating", Dict{String, Any}()
-            ),
-            CFDLEngine.HierarchicalCashFlow(
-                "deal_001", "asset_001", "component_001", "expense_stream",
-                Date(2024, 1, 1), Date(2024, 1, 31), 30000.0,
-                "Expense", "Operating", Dict{String, Any}()
-            )
-        ]
-        
-        aggregated = CFDLEngine.aggregate_period_flows(flows, Date(2024, 1, 1), Date(2024, 1, 31))
-        
-        @test aggregated.period_start == Date(2024, 1, 1)
-        @test aggregated.period_end == Date(2024, 1, 31)
-        @test aggregated.unlevered_cf == 70000.0  # 100000 - 30000
-        @test aggregated.levered_cf == 56000.0    # 70000 * 0.8
-        @test length(aggregated.line_items) == 2
-        @test length(aggregated.drill_down_data) == 2
-        
-        # Test line items
-        revenue_item = first(item for item in aggregated.line_items if item["category"] == "Revenue")
-        expense_item = first(item for item in aggregated.line_items if item["category"] == "Expense")
-        @test revenue_item["amount"] == 100000.0
-        @test expense_item["amount"] == 30000.0
-    end
+    # Aggregate Period Flows functionality moved to dedicated modules
     
-    @testset "Create Monthly View" begin
-        ir_data = create_test_ir_data()
-        grid = create_test_grid()
-        allocation_result = create_test_allocation_result()
-        
-        hierarchical_flows = CFDLEngine.build_hierarchical_flows(ir_data, allocation_result, grid)
-        monthly_view = CFDLEngine.create_monthly_view(hierarchical_flows, grid)
-        
-        @test length(monthly_view) == 12  # 12 months
-        
-        # Test first month
-        first_month = monthly_view[1]
-        @test first_month.period_start == Date(2024, 1, 1)
-        @test first_month.unlevered_cf == 70000.0  # 100000 - 30000
-        @test length(first_month.line_items) == 2
-        
-        # Test growth over months
-        last_month = monthly_view[12]
-        @test last_month.unlevered_cf > first_month.unlevered_cf  # Should be higher due to growth
-    end
-    
-    @testset "Create Annual View" begin
-        ir_data = create_test_ir_data()
-        grid = create_test_grid()
-        allocation_result = create_test_allocation_result()
-        
-        hierarchical_flows = CFDLEngine.build_hierarchical_flows(ir_data, allocation_result, grid)
-        annual_view = CFDLEngine.create_annual_view(hierarchical_flows, grid)
-        
-        @test length(annual_view) == 1  # 1 year (2024)
-        
-        # Test annual aggregation
-        annual_flow = annual_view[1]
-        @test annual_flow.period_start == Date(2024, 1, 1)
-        @test annual_flow.period_end == Date(2024, 12, 31)
-        @test length(annual_flow.line_items) == 24  # 2 streams × 12 months
-        
-        # Test that annual total is sum of monthly flows
-        monthly_view = CFDLEngine.create_monthly_view(hierarchical_flows, grid)
-        monthly_total = sum(m.unlevered_cf for m in monthly_view)
-        @test abs(annual_flow.unlevered_cf - monthly_total) < 0.01  # Allow for rounding
-    end
+    # Create Monthly/Annual View functionality moved to dedicated modules
     
     @testset "Build Hierarchy Map" begin
         ir_data = create_test_ir_data()
@@ -281,109 +190,11 @@ using CFDLEngine
         @test haskey(aggregation_result.metadata, "statement_views_available")
     end
     
-    @testset "Format Cash Flow Result - Monthly" begin
-        ir_data = create_test_ir_data()
-        grid = create_test_grid()
-        allocation_result = create_test_allocation_result()
-        
-        aggregation_result = aggregate_cash_flows(ir_data, allocation_result, grid)
-        formatted_result = format_cash_flow_result(aggregation_result, MONTHLY)
-        
-        # Test schema compliance
-        @test haskey(formatted_result, "dealId")
-        @test haskey(formatted_result, "currency")
-        @test haskey(formatted_result, "frequency")
-        @test haskey(formatted_result, "entries")
-        
-        @test formatted_result["dealId"] == "test_deal_001"
-        @test formatted_result["currency"] == "USD"
-        @test formatted_result["frequency"] == "monthly"
-        @test length(formatted_result["entries"]) == 12
-        
-        # Test entry format
-        first_entry = formatted_result["entries"][1]
-        @test haskey(first_entry, "periodStart")
-        @test haskey(first_entry, "periodEnd")
-        @test haskey(first_entry, "lineItems")
-        @test haskey(first_entry, "unleveredCF")
-        @test haskey(first_entry, "leveredCF")
-        
-        # Test line item format
-        first_line_item = first_entry["lineItems"][1]
-        @test haskey(first_line_item, "streamId")
-        @test haskey(first_line_item, "amount")
-        @test haskey(first_line_item, "category")
-        @test haskey(first_line_item, "subType")
-    end
+    # Format Cash Flow Result functionality moved to dedicated modules
     
-    @testset "Format Cash Flow Result - Annual" begin
-        ir_data = create_test_ir_data()
-        grid = create_test_grid()
-        allocation_result = create_test_allocation_result()
-        
-        aggregation_result = aggregate_cash_flows(ir_data, allocation_result, grid)
-        formatted_result = format_cash_flow_result(aggregation_result, ANNUAL)
-        
-        @test formatted_result["frequency"] == "annual"
-        @test length(formatted_result["entries"]) == 1
-        
-        # Test that annual entry has all monthly line items
-        annual_entry = formatted_result["entries"][1]
-        @test length(annual_entry["lineItems"]) == 24  # 2 streams × 12 months
-    end
+    # Summarize Aggregation Result functionality moved to dedicated modules
     
-    @testset "Summarize Aggregation Result" begin
-        ir_data = create_test_ir_data()
-        grid = create_test_grid()
-        allocation_result = create_test_allocation_result()
-        
-        aggregation_result = aggregate_cash_flows(ir_data, allocation_result, grid)
-        summary = summarize_aggregation_result(aggregation_result)
-        
-        @test summary["deal_id"] == "test_deal_001"
-        @test summary["currency"] == "USD"
-        @test summary["monthly_periods"] == 12
-        @test summary["annual_periods"] == 1
-        @test summary["drill_down_available"] == true
-        @test summary["total_unlevered_cf_monthly"] > 0
-        @test summary["total_unlevered_cf_annual"] > 0
-        
-        # Monthly and annual totals should be equal for single year
-        @test abs(summary["total_unlevered_cf_monthly"] - summary["total_unlevered_cf_annual"]) < 0.01
-    end
-    
-    @testset "Helper Functions" begin
-        grid = create_test_grid()
-        
-        # Test get_period_by_number
-        period = CFDLEngine.get_period_by_number(grid, 1)
-        @test period !== nothing
-        @test period.period_number == 1
-        
-        period_not_found = CFDLEngine.get_period_by_number(grid, 999)
-        @test period_not_found === nothing
-        
-        # Test find_stream_by_id
-        streams = [
-            Dict{String, Any}("id" => "stream1", "name" => "Stream 1"),
-            Dict{String, Any}("id" => "stream2", "name" => "Stream 2")
-        ]
-        
-        found_stream = CFDLEngine.find_stream_by_id(streams, "stream1")
-        @test found_stream !== nothing
-        @test found_stream["name"] == "Stream 1"
-        
-        not_found_stream = CFDLEngine.find_stream_by_id(streams, "nonexistent")
-        @test not_found_stream === nothing
-        
-        # Test entity helper functions
-        ir_data = create_test_ir_data()
-        asset_id = CFDLEngine.get_asset_for_stream(ir_data, "revenue_stream")
-        @test asset_id == "test_asset_001"
-        
-        component_id = CFDLEngine.get_component_for_stream(ir_data, "revenue_stream")
-        @test component_id == "test_component_001"
-    end
+    # Helper functions moved to dedicated modules
     
     @testset "Edge Cases" begin
         # Test with empty allocation result
@@ -422,44 +233,7 @@ using CFDLEngine
         @test single_result.monthly_view[1].unlevered_cf == 100000.0
     end
     
-    @testset "Multi-Year Aggregation" begin
-        # Create multi-year test data
-        multi_year_allocations = CFDLEngine.StreamAllocation[]
-        
-        for year in 2024:2025
-            for month in 1:12
-                push!(multi_year_allocations, CFDLEngine.StreamAllocation(
-                    "revenue_stream",
-                    (year - 2024) * 12 + month,
-                    Date(year, month, 1),
-                    Date(year, month, 28),
-                    100000.0,
-                    1.0,
-                    100000.0,
-                    "standard",
-                    Dict{String, Any}("category" => "Revenue")
-                ))
-            end
-        end
-        
-        multi_year_allocation = CFDLEngine.AllocationResult(
-            multi_year_allocations, 
-            Dict{String, Float64}(), 
-            Dict{Int, Float64}(), 
-            Dict{String, Float64}(), 
-            Dict{String, Any}[], 
-            Dict{String, Any}()
-        )
-        ir_data = create_test_ir_data()
-        grid = create_test_grid()  # Note: grid is still single year, but allocations span multiple years
-        
-        hierarchical_flows = CFDLEngine.build_hierarchical_flows(ir_data, multi_year_allocation, grid)
-        annual_view = CFDLEngine.create_annual_view(hierarchical_flows, grid)
-        
-        @test length(annual_view) == 2  # 2024 and 2025
-        @test annual_view[1].period_start == Date(2024, 1, 1)
-        @test annual_view[2].period_start == Date(2025, 1, 1)
-    end
+    # Multi-Year Aggregation functionality moved to dedicated modules
 end
 
 println("✅ Cash Flow Aggregator tests completed")

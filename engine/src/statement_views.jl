@@ -132,7 +132,7 @@ function generate_gaap_statements(calculations::Vector{AvailableCashCalculation}
             calc.period_start,
             calc.period_end,
             GAAP,
-            Monthly,  # Default to monthly, can be aggregated later
+            MONTHLY,  # Default to monthly, can be aggregated later
             operating_cf,
             financing_cf,
             investing_cf,
@@ -530,3 +530,4 @@ function calculate_liquidity_ratio(calc::AvailableCashCalculation)::Float64
     # Simplified liquidity assessment
     return calc.available_for_distribution / max(1.0, calc.capital_reserves)
 end
+

@@ -21,6 +21,9 @@ struct StreamAllocation
     metadata::Dict{String, Any}
 end
 
+# Define comparison for sorting StreamAllocations by period number
+Base.isless(a::StreamAllocation, b::StreamAllocation) = a.period_number < b.period_number
+
 """
     AllocationResult
 

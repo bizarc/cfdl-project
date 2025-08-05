@@ -251,14 +251,14 @@ end
 # Helper functions
 
 """
-    calculate_capital_reserves(cash_flow::Float64, period_start::Date, reserve_rate::Float64 = nothing) -> Float64
+    calculate_capital_reserves(cash_flow::Float64, period_start::Date, reserve_rate::Union{Float64, Nothing} = nothing) -> Float64
 
 Calculate capital reserves based on cash flow and industry standards.
 
 Capital reserves are typically 3-5% of gross revenue or 1-3% of property value,
 but simplified here as a percentage of cash flow.
 """
-function calculate_capital_reserves(cash_flow::Float64, period_start::Date, reserve_rate::Float64 = nothing)::Float64
+function calculate_capital_reserves(cash_flow::Float64, period_start::Date, reserve_rate::Union{Float64, Nothing} = nothing)::Float64
     if reserve_rate === nothing
         reserve_rate = calculate_reserve_rate(period_start)
     end

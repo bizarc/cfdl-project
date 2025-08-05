@@ -41,7 +41,7 @@ function assemble_cash_flows(grouped_streams::GroupedStreams, ir_data::IRData, g
     
     # Process monthly groups from the temporal grouping
     for monthly_group in grouped_streams.temporal.monthly_groups
-        if isempty(monthly_group.allocations)
+        if isempty(monthly_group.streams)
             continue
         end
         
@@ -58,15 +58,15 @@ function assemble_cash_flows(grouped_streams::GroupedStreams, ir_data::IRData, g
         investing_items = Dict{String, Float64}()
         tax_items = Dict{String, Float64}()
         
-        for allocation in monthly_group.allocations
-            stream = find_stream_by_id(ir_data.streams, allocation.stream_id)
+        for stream_data in monthly_group.streams
+            stream = find_stream_by_id(ir_data.streams, stream_data["stream_id"])
             if stream === nothing
                 continue
             end
             
             category = categorize_stream(stream)
-            stream_name = get(stream, "name", allocation.stream_id)
-            amount = allocation.adjusted_amount
+            stream_name = get(stream, "name", stream_data["stream_id"])
+            amount = stream_data["amount"]
             
             if category == OPERATING
                 operating_items[stream_name] = get(operating_items, stream_name, 0.0) + amount
@@ -81,8 +81,8 @@ function assemble_cash_flows(grouped_streams::GroupedStreams, ir_data::IRData, g
         
         # Create cash flow entry with metadata
         metadata = Dict{String, Any}(
-            "group_id" => monthly_group.group_id,
-            "allocation_count" => length(monthly_group.allocations),
+            "entity_id" => monthly_group.entity_id,
+            "allocation_count" => length(monthly_group.streams),
             "total_amount" => monthly_group.total_amount,
             "stage" => "cash_flow_assembly"
         )

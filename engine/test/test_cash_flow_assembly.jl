@@ -22,9 +22,18 @@ using CFDLEngine
             )
         ]
         
+        # Convert allocations to stream dictionaries for StreamGroup
+        streams = [Dict{String, Any}(
+            "stream_id" => alloc.stream_id,
+            "amount" => alloc.adjusted_amount,
+            "growth_factor" => alloc.growth_factor,
+            "allocation_method" => alloc.allocation_method,
+            "metadata" => alloc.metadata
+        ) for alloc in allocations]
+        
         monthly_group = CFDLEngine.StreamGroup(
             "monthly_2024_01", "monthly", Date(2024, 1, 1), Date(2024, 1, 31),
-            allocations, 130000.0, Dict{String, Any}()
+            streams, 130000.0, Dict{String, Any}()
         )
         
         temporal_groups = CFDLEngine.TemporalStreamGroups(

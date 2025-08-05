@@ -22,7 +22,7 @@ export get_period_by_date, get_periods_in_range
 export StreamAllocation, AllocationResult, allocate_streams, summarize_allocation_result
 export CashFlowView  # Alias for ReportingFrequency
 export HierarchicalCashFlow, AggregatedCashFlow, CashFlowAggregationResult
-export aggregate_cash_flows, format_cash_flow_result, summarize_aggregation_result
+export aggregate_cash_flows, summarize_aggregation_result
 export StreamGroup, HierarchicalStreamGroups, TemporalStreamGroups, GroupedStreams
 export collect_streams, summarize_grouped_streams
 
@@ -35,12 +35,12 @@ export ProcessingStage, STREAM_COLLECTION, CASH_FLOW_ASSEMBLY, OPERATING_STATEME
 export ValidationSeverity, INFO, WARNING, ERROR, CRITICAL
 
 # Export modular cash flow pipeline functions
-export CashFlowEntry, assemble_cash_flows, categorize_cash_flows, summarize_cash_flow_entries
-export OperatingStatement, generate_operating_statements, calculate_noi, calculate_noi_metrics
-export FinancingAdjustment, apply_financing_adjustments, calculate_debt_metrics
-export TaxAdjustment, calculate_tax_adjustments, apply_final_tax_adjustments, calculate_tax_metrics
-export AvailableCashCalculation, calculate_available_cash, apply_distribution_policy, calculate_distribution_metrics
-export FinancialStatement, generate_statement_views, aggregate_to_annual, summarize_statement_views
+export CashFlowEntry, assemble_cash_flows, categorize_cash_flows, summarize_cash_flow_entries, categorize_stream, find_stream_by_id
+export OperatingStatement, generate_operating_statements, calculate_noi, calculate_noi_metrics, summarize_operating_statements, is_revenue_item, validate_operating_statement
+export FinancingAdjustment, apply_financing_adjustments, calculate_debt_metrics, calculate_dscr_trend, summarize_financing_adjustments, validate_financing_adjustment, is_debt_service_item
+export TaxAdjustment, calculate_tax_adjustments, apply_final_tax_adjustments, calculate_tax_metrics, summarize_tax_adjustments, is_depreciation_item, is_amortization_item, get_applicable_tax_rates, calculate_income_tax, calculate_tax_credits, calculate_tax_rate_volatility, validate_tax_adjustment
+export AvailableCashCalculation, calculate_available_cash, apply_distribution_policy, calculate_distribution_metrics, calculate_capital_reserves, calculate_cash_flow_volatility, summarize_available_cash, estimate_monthly_operating_expense, validate_available_cash_calculation
+export FinancialStatement, generate_statement_views, aggregate_to_annual, summarize_statement_views, generate_gaap_statements, generate_non_gaap_statements, generate_tax_statements, generate_management_statements, calculate_cash_on_cash_return, calculate_distribution_coverage, estimate_taxable_income, estimate_tax_expense, calculate_effective_tax_rate
 
 # Include component modules
 include("types.jl")
