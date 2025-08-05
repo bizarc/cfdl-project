@@ -131,9 +131,9 @@ function aggregate_cash_flows(ir_data::IRData, allocation_result::AllocationResu
     monthly_statements = get(statement_views, "non_gaap", FinancialStatement[])
     annual_statements = aggregate_to_annual(monthly_statements)
     
-    # Convert to legacy format for backward compatibility
-    monthly_view = convert_to_legacy_format(monthly_statements, "monthly")
-    annual_view = convert_to_legacy_format(annual_statements, "annual")
+    # Convert statements to aggregated cash flow views
+    monthly_view = convert_statements_to_aggregated_flows(monthly_statements, "monthly")
+    annual_view = convert_statements_to_aggregated_flows(annual_statements, "annual")
     
     # Build hierarchy map for drill-down capability
     hierarchy_map = build_hierarchy_map(ir_data)
@@ -168,11 +168,11 @@ function aggregate_cash_flows(ir_data::IRData, allocation_result::AllocationResu
 end
 
 """
-    convert_to_legacy_format(statements::Vector{FinancialStatement}, frequency::String) -> Vector{AggregatedCashFlow}
+    convert_statements_to_aggregated_flows(statements::Vector{FinancialStatement}, frequency::String) -> Vector{AggregatedCashFlow}
 
-Convert new FinancialStatement format to legacy AggregatedCashFlow format for backward compatibility.
+Convert FinancialStatement objects to AggregatedCashFlow objects for the aggregation result.
 """
-function convert_to_legacy_format(statements::Vector{FinancialStatement}, frequency::String)::Vector{AggregatedCashFlow}
+function convert_statements_to_aggregated_flows(statements::Vector{FinancialStatement}, frequency::String)::Vector{AggregatedCashFlow}
     legacy_flows = Vector{AggregatedCashFlow}()
     
     for stmt in statements
@@ -256,6 +256,8 @@ function summarize_aggregation_result(aggregation_result::CashFlowAggregationRes
         "average_monthly_levered" => monthly_count > 0 ? round(total_levered / monthly_count, digits=2) : 0.0
     )
 end
+
+
 
 """
     build_hierarchy_map(ir_data::IRData) -> Dict{String, Vector{String}}

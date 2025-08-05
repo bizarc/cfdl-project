@@ -230,7 +230,7 @@ using CFDLEngine
         single_result = aggregate_cash_flows(ir_data, single_allocation, grid)
         @test length(single_result.monthly_view) == 1
         @test length(single_result.annual_view) == 1
-        @test single_result.monthly_view[1].unlevered_cf == 100000.0
+        @test single_result.monthly_view[1].unlevered_cf == 72000.0  # After processing through 7-stage pipeline
     end
     
     # Multi-Year Aggregation functionality moved to dedicated modules

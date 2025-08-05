@@ -194,8 +194,7 @@ function execute_cash_flow_pipeline(ir_data::IRData, sampled_variables::Dict{Str
         "grid_summary" => summarize_grid(grid),
         "allocation_summary" => summarize_allocation_result(allocation_result),
         "aggregation_summary" => summarize_aggregation_result(aggregation_result),
-        "monthly_cash_flows" => format_cash_flow_result(aggregation_result, MONTHLY),
-        "annual_cash_flows" => format_cash_flow_result(aggregation_result, ANNUAL),
+        "cash_flow_result" => aggregation_result,
         "metadata" => Dict(
             "sampled_variables" => sampled_variables,
             "temporal_grid_periods" => grid.total_periods,

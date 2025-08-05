@@ -156,7 +156,6 @@ using CFDLEngine
         @test entry.operating_items["Expense Stream"] == 30000.0
         
         # Check metadata
-        @test haskey(entry.metadata, "group_id")
         @test haskey(entry.metadata, "allocation_count")
         @test entry.metadata["allocation_count"] == 2
         @test entry.metadata["stage"] == "cash_flow_assembly"

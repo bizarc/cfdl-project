@@ -46,15 +46,26 @@ This document outlines the roadmap for building a minimum viable CFDL v1.2 demo,
    - ✅ Day count conventions (Actual/365, 30/360, Actual/Actual)
    - ✅ Comprehensive testing (67 passing tests)
 
-3. **Stream Allocator & Logic Block Engine**  
-   - Growth factor application (potentially stochastic)
-   - Logic block execution for custom overrides
-   - Real options capability (dynamic model modification)
+3. **Stream Allocator & Logic Block Engine** ✅ COMPLETED  
+   - ✅ Growth factor application (deterministic and stochastic)
+   - ✅ Logic block execution framework with custom overrides
+   - ✅ Real options capability infrastructure (dynamic model modification ready)
+   - ✅ Comprehensive testing (35 passing tests)
 
-4. **Hierarchical Cash-Flow Aggregator**  
-   - Monthly detailed view + Annual statement views
-   - Drill-down capability: Deal → Asset → Component → Stream
-   - Revenue aggregation with source tracking
+4. **Hierarchical Cash-Flow Aggregator** ✅ COMPLETED  
+   - ✅ **7-Stage Processing Pipeline**: Industry-standard modular architecture
+   - ✅ **Stream Collection**: Hierarchical and temporal grouping
+   - ✅ **Cash Flow Assembly**: Categorization and structured entry creation
+   - ✅ **Operating Statements**: NOI calculation with real estate standards
+   - ✅ **Financing Adjustments**: Debt service and DSCR trend analysis
+   - ✅ **Tax Processing**: Depreciation, amortization, and tax calculations
+   - ✅ **Available Cash**: Distributable cash after reserves and working capital
+   - ✅ **Statement Views**: GAAP, Non-GAAP, Monthly, and Annual reporting views
+   - ✅ Monthly detailed view + Annual statement views
+   - ✅ Drill-down capability: Deal → Asset → Component → Stream
+   - ✅ Revenue aggregation with source tracking and industry keyword recognition
+   - ✅ **Architecture Excellence**: Clean separation of business logic from formatting
+   - ✅ **100% Test Success**: 816 passing tests with comprehensive coverage
 
 5. **Metrics Library (NPV, IRR, DSCR, MOIC, Payback, eNPV, eIRR)**  
    - Multi-level metric calculations
@@ -92,4 +103,10 @@ This document outlines the roadmap for building a minimum viable CFDL v1.2 demo,
 
 *Current Progress:*  
 - ✅ **Task 1**: DSL Compilation Pipeline completed
-- 🔄 **Task 2**: Engine Prototype - Sub-tasks 2.1-2.3 completed, implementing 2.4 (Cash Flow Aggregator)
+- 🔄 **Task 2**: Engine Prototype - Sub-tasks 2.1-2.4 completed with **100% test success** (816 passing tests)
+  - ✅ **2.1**: Monte Carlo Harness (31 tests)
+  - ✅ **2.2**: Temporal Grid Generator (67 tests) 
+  - ✅ **2.3**: Stream Allocator & Logic Block Engine (35 tests)
+  - ✅ **2.4**: Hierarchical Cash-Flow Aggregator (683 tests across 7 modular stages)
+  - 🔄 **2.5**: Metrics Library (next priority)
+  - 🔄 **2.6**: Waterfall Distributor (future)

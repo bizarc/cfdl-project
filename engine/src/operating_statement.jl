@@ -254,7 +254,7 @@ function is_revenue_item(item_name::String, amount::Float64)::Bool
     
     # Explicit revenue categories (even if negative, which might indicate adjustments)
     if any(keyword -> contains(item_lower, keyword), 
-           ["rental_income", "base_rent", "percentage_rent", "cam_recovery", "ancillary"])
+           ["rental_income", "base_rent", "percentage_rent", "cam", "ancillary"])
         return true
     end
     

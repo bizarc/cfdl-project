@@ -288,7 +288,15 @@ function calculate_dscr_trend(dscrs::Vector{Float64})::String
         return "insufficient_data"
     end
     
-    # Simple trend analysis
+    # Trend analysis based on overall direction and volatility
+    first_value = dscrs[1]
+    last_value = dscrs[end]
+    
+    # Calculate the overall change
+    overall_change = last_value - first_value
+    change_threshold = 0.05  # 5% threshold for significant change
+    
+    # Count period-by-period changes for volatility assessment
     increasing_periods = 0
     decreasing_periods = 0
     
@@ -300,9 +308,12 @@ function calculate_dscr_trend(dscrs::Vector{Float64})::String
         end
     end
     
-    if increasing_periods > decreasing_periods
+    # If overall change is minimal and there's mixed volatility, it's stable
+    if abs(overall_change) < change_threshold && increasing_periods > 0 && decreasing_periods > 0
+        return "stable"
+    elseif overall_change > change_threshold
         return "improving"
-    elseif decreasing_periods > increasing_periods
+    elseif overall_change < -change_threshold
         return "declining"
     else
         return "stable"
