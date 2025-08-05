@@ -1,338 +1,592 @@
 grammar CFDL;
 
+@header {
+  package dev.cfdl.parser;
+}
+
+options {
+  language = Java;
+}
+
+//=====================================================================
 // Parser Rules
-cfdlModel
-    : specification? importSection* definition* EOF
-    ;
+//=====================================================================
 
 specification
-    : 'version' ':' versionLiteral NEWLINE?
+    : definition+ EOF
     ;
 
-importSection
-    : 'include' ':' includeList NEWLINE
-    ;
-
-includeList
-    : YAML_PATH (',' YAML_PATH)*
-    ;
+// Top-level definitions: specific constructs based on schemas
+//=====================================================================
 
 definition
-    : dealDef
-    | assetDef
-    | componentDef
-    | portfolioDef
-    | fundDef
-    | contractDef
-    | partyDef
-    | capitalStackDef
-    | templateDef
-    | streamDef
-    | assumptionDef
-    | logicBlockDef
-    | ruleBlockDef
-    | viewDef
+    : dealDefinition
+    | assetDefinition
+    | componentDefinition
+    | streamDefinition
+    | assumptionDefinition
+    | logicBlockDefinition
+    | ruleBlockDefinition
+    | scheduleDefinition
+    | eventTriggerDefinition
+    | templateDefinition
+    | contractDefinition
+    | partyDefinition
+    | fundDefinition
+    | portfolioDefinition
+    | capitalStackDefinition
+    | waterFallDefinition
+    | metricDefinition
+    | genericDefinition
     ;
 
-// Deal
-dealDef
-    : 'deal' IDENTIFIER '{' dealBody '}'
+// Generic fallback for other constructs
+genericDefinition
+    : ('entity'|'behavior'|'temporal'|'result') IDENTIFIER '{' statement* '}'
     ;
 
-dealBody
-    : (dealProperty NEWLINE?)*
+// Specific entity definitions
+dealDefinition
+    : 'deal' IDENTIFIER '{' dealProperty* '}'
     ;
 
+assetDefinition
+    : 'asset' IDENTIFIER '{' assetProperty* '}'
+    ;
+
+componentDefinition
+    : 'component' IDENTIFIER '{' componentProperty* '}'
+    ;
+
+streamDefinition
+    : 'stream' IDENTIFIER '{' streamProperty* '}'
+    ;
+
+assumptionDefinition
+    : 'assumption' IDENTIFIER '{' assumptionProperty* '}'
+    ;
+
+logicBlockDefinition
+    : 'logic_block' IDENTIFIER '{' logicBlockProperty* '}'
+    ;
+
+ruleBlockDefinition
+    : 'rule_block' IDENTIFIER '{' ruleBlockProperty* '}'
+    ;
+
+scheduleDefinition
+    : 'schedule' IDENTIFIER '{' scheduleProperty* '}'
+    ;
+
+eventTriggerDefinition
+    : 'event_trigger' IDENTIFIER '{' eventTriggerProperty* '}'
+    ;
+
+templateDefinition
+    : 'template' IDENTIFIER '{' templateProperty* '}'
+    ;
+
+contractDefinition
+    : 'contract' IDENTIFIER '{' contractProperty* '}'
+    ;
+
+partyDefinition
+    : 'party' IDENTIFIER '{' partyProperty* '}'
+    ;
+
+fundDefinition
+    : 'fund' IDENTIFIER '{' fundProperty* '}'
+    ;
+
+portfolioDefinition
+    : 'portfolio' IDENTIFIER '{' portfolioProperty* '}'
+    ;
+
+capitalStackDefinition
+    : 'capital_stack' IDENTIFIER '{' capitalStackProperty* '}'
+    ;
+
+waterFallDefinition
+    : 'waterfall' IDENTIFIER '{' waterFallProperty* '}'
+    ;
+
+metricDefinition
+    : 'metric' IDENTIFIER '{' metricProperty* '}'
+    ;
+
+//=====================================================================
+// Specific Property Rules for Each Construct Type
+//=====================================================================
+
+// Deal properties
 dealProperty
-    : 'entryDate' ':' dateLiteral
-    | 'analysisStart' ':' dateLiteral
-    | 'holdingPeriod' ':' durationLiteral
-    | 'calendar' ':' calendarBlock
+    : 'name' ':' STRING ';'
+    | 'dealType' ':' DEAL_TYPE ';' 
+    | 'entryDate' ':' STRING ';'  // Date string
+    | 'exitDate' ':' STRING ';'
+    | 'analysisStart' ':' STRING ';'
+    | 'currency' ':' STRING ';'
+    | 'holdingPeriodYears' ':' NUMBER ';'
+    | 'assets' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']' ';'
+    | 'streams' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']' ';'
+    | genericProperty
     ;
 
-// Asset
-assetDef
-    : 'asset' IDENTIFIER '{' (assetProperty NEWLINE?)* '}'
-    ;
-
+// Asset properties  
 assetProperty
-    : 'id' ':' STRING
-    | 'name' ':' STRING
-    | 'parentDeal' ':' IDENTIFIER
+    : 'name' ':' STRING ';'
+    | 'dealId' ':' IDENTIFIER ';'
+    | 'category' ':' ASSET_CATEGORY ';'
+    | 'description' ':' STRING ';'
+    | 'components' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']' ';'
+    | 'streams' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']' ';'
+    | 'state' ':' ASSET_STATE ';'
+    | genericProperty
     ;
 
-// Component
-componentDef
-    : 'component' IDENTIFIER '{' (componentProperty NEWLINE?)* '}'
-    ;
-
+// Component properties
 componentProperty
-    : 'type' ':' IDENTIFIER
-    | 'parentAsset' ':' IDENTIFIER
-    | 'streams' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']'
+    : 'name' ':' STRING ';'
+    | 'assetId' ':' IDENTIFIER ';'
+    | 'scope' ':' COMPONENT_SCOPE ';'
+    | 'streams' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']' ';'
+    | genericProperty
     ;
 
-// Portfolio
-portfolioDef
-    : 'portfolio' IDENTIFIER '{' (portfolioProperty NEWLINE?)* '}'
-    ;
-
-portfolioProperty
-    : 'deals' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']'
-    ;
-
-// Fund
-fundDef
-    : 'fund' IDENTIFIER '{' (fundProperty NEWLINE?)* '}'
-    ;
-
-fundProperty
-    : 'portfolios' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']'
-    ;
-
-// Contract
-contractDef
-    : 'contract' IDENTIFIER '{' (contractProperty NEWLINE?)* '}'
-    ;
-
-contractProperty
-    : 'type' ':' STRING
-    | 'parties' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']'
-    | 'terms' ':' '{' (~[\}])* '}'
-    ;
-
-// Party
-partyDef
-    : 'party' IDENTIFIER '{' (partyProperty NEWLINE?)* '}'
-    ;
-
-partyProperty
-    : 'name' ':' STRING
-    | 'role' ':' STRING
-    ;
-
-// Capital Stack
-capitalStackDef
-    : 'capital_stack' IDENTIFIER '{' (capitalStackProperty NEWLINE?)* '}'
-    ;
-
-capitalStackProperty
-    : 'layers' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']'
-    ;
-
-// Template
-templateDef
-    : 'template' IDENTIFIER '{' (templateProperty NEWLINE?)* '}'
-    ;
-
-templateProperty
-    : 'include' ':' YAML_PATH
-    ;
-
-// Stream
-streamDef
-    : 'stream' IDENTIFIER '{' streamBody '}'
-    ;
-
-streamBody
-    : (streamProperty NEWLINE?)*
-    ;
-
+// Stream properties
 streamProperty
-    : 'level' ':' levelEnum
-    | 'category' ':' categoryEnum
-    | 'subType' ':' subTypeEnum
-    | 'schedule' ':' scheduleLiteral
-    | 'amount' ':' amountExpr
-    | 'growth' ':' growthExpr
-    | 'tags' ':' tagList
+    : 'name' ':' STRING ';'
+    | 'scope' ':' COMPONENT_SCOPE ';'
+    | 'category' ':' STREAM_CATEGORY ';'
+    | 'subType' ':' STREAM_SUB_TYPE ';' 
+    | 'schedule' ':' IDENTIFIER ';'
+    | 'amount' ':' (NUMBER | IDENTIFIER) ';'
+    | 'amountType' ':' AMOUNT_TYPE ';'
+    | genericProperty
     ;
 
-// Assumption
-assumptionDef
-    : 'assumption' IDENTIFIER '{' (assumptionProperty NEWLINE?)* '}'
-    ;
-
+// Assumption properties
 assumptionProperty
-    : 'type' ':' dataType
-    | 'default' ':' value
-    | 'range' ':' '[' value ',' value ']'
+    : 'name' ':' STRING ';'
+    | 'category' ':' ASSUMPTION_CATEGORY ';'
+    | 'scope' ':' COMPONENT_SCOPE ';'
+    | 'type' ':' ASSUMPTION_TYPE ';'
+    | 'value' ':' (NUMBER | STRING | IDENTIFIER) ';'
+    | 'distributionType' ':' DISTRIBUTION_TYPE ';'
+    | genericProperty
     ;
 
-// LogicBlock
-logicBlockDef
-    : 'logic_block' IDENTIFIER '{' (logicBlockProperty NEWLINE?)* '}'
-    ;
-
+// Logic block properties
 logicBlockProperty
-    : 'inputs' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']'
-    | 'outputs' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']'
-    | 'code' ':' CODE_BLOCK
+    : 'name' ':' STRING ';'
+    | 'scope' ':' COMPONENT_SCOPE ';'
+    | 'type' ':' LOGIC_BLOCK_TYPE ';'
+    | 'code' ':' STRING ';'
+    | 'language' ':' STRING ';'
+    | 'inputs' ':' '[' STRING (',' STRING)* ']' ';'
+    | 'outputs' ':' '[' STRING (',' STRING)* ']' ';'
+    | 'executionOrder' ':' NUMBER ';'
+    | genericProperty
     ;
 
-// RuleBlock
-ruleBlockDef
-    : 'rule_block' IDENTIFIER '{' (ruleBlockProperty NEWLINE?)* '}'
-    ;
-
+// Rule block properties
 ruleBlockProperty
-    : 'when' ':' conditionExpr
-    | 'action' ':' IDENTIFIER ':=' expression
+    : 'name' ':' STRING ';'
+    | 'scope' ':' COMPONENT_SCOPE ';'
+    | 'condition' ':' STRING ';'
+    | 'action' ':' STRING ';'
+    | genericProperty
     ;
 
-// View
-viewDef
-    : 'view' IDENTIFIER '{' (viewProperty NEWLINE?)* '}'
+// Schedule properties
+scheduleProperty
+    : 'name' ':' STRING ';'
+    | 'type' ':' SCHEDULE_TYPE ';'
+    | 'frequency' ':' FREQUENCY ';'
+    | 'startDate' ':' STRING ';'
+    | 'endDate' ':' STRING ';'
+    | genericProperty
     ;
 
-viewProperty
-    : 'includeTags' ':' tagList
-    | 'excludeTags' ':' tagList
+// Event trigger properties
+eventTriggerProperty
+    : 'name' ':' STRING ';'
+    | 'eventType' ':' STRING ';'
+    | 'operator' ':' TRIGGER_OPERATOR ';'
+    | 'threshold' ':' NUMBER ';'
+    | genericProperty
     ;
 
-// Calendar
-calendarBlock
-    : '{' (calendarProperty NEWLINE?)* '}'
+// Template properties
+templateProperty
+    : 'name' ':' STRING ';'
+    | 'templateType' ':' TEMPLATE_TYPE ';'
+    | 'body' ':' STRING ';'
+    | genericProperty
     ;
 
-calendarProperty
-    : 'frequency' ':' freqEnum
-    | 'businessDayConvention' ':' IDENTIFIER
-    | 'dayCount' ':' IDENTIFIER
-    | 'holidayCalendar' ':' IDENTIFIER
+// Contract properties
+contractProperty
+    : 'name' ':' STRING ';'
+    | 'parties' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']' ';'
+    | 'terms' ':' STRING ';'
+    | genericProperty
     ;
 
-freqEnum
-    : 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual'
+// Party properties
+partyProperty
+    : 'name' ':' STRING ';'
+    | 'role' ':' PARTY_ROLE ';'
+    | 'contact' ':' STRING ';'
+    | genericProperty
     ;
 
-// Literals & Enums
-levelEnum
-    : 'asset' | 'deal' | 'portfolio' | 'fund'
+// Fund properties
+fundProperty
+    : 'name' ':' STRING ';'
+    | 'participantRole' ':' FUND_PARTICIPANT_ROLE ';'
+    | 'totalCommitment' ':' NUMBER ';'
+    | genericProperty
     ;
 
-categoryEnum
-    : 'Revenue' | 'Expense' | 'OtherIncome'
+// Portfolio properties
+portfolioProperty
+    : 'name' ':' STRING ';'
+    | 'deals' ':' '[' IDENTIFIER (',' IDENTIFIER)* ']' ';'
+    | genericProperty
     ;
 
-subTypeEnum
-    : 'Operating' | 'Financing' | 'CapEx' | 'Acquisition' | 'Fees'
+// Capital stack properties
+capitalStackProperty
+    : 'name' ':' STRING ';'
+    | 'totalAmount' ':' NUMBER ';'
+    | genericProperty
     ;
 
-tagEnum
-    : 'GAAP' | 'NonGAAP' | 'Tax' | 'Actual' | 'Forecast'
+// Waterfall properties
+waterFallProperty
+    : 'name' ':' STRING ';'
+    | 'distributionRules' ':' STRING ';'
+    | genericProperty
     ;
 
-distributionType
-    : 'logNormal' | 'normal' | 'uniform'
+// Metric properties
+metricProperty
+    : 'name' ':' STRING ';'
+    | 'type' ':' METRIC_TYPE ';'
+    | 'unit' ':' (PAYBACK_UNIT | STRING) ';'
+    | genericProperty
     ;
 
-scheduleLiteral
-    : 'oneTime' '(' dateLiteral ')'
-    | 'yearly' ('(' 'count' '=' INT ')')?
-    | 'monthly' ('(' 'count' '=' INT ')')?
-    | 'quarterly'
+// Generic property fallback
+genericProperty
+    : IDENTIFIER ':' value ';'
     ;
 
-// Expressions
-expression
-    : value
-    | IDENTIFIER
-    | expression operator expression
+//=====================================================================
+// Core Statement & Property Rules
+//=====================================================================
+
+statement
+    : propertyAssign ';'
+    | logicBlockDef
+    | referenceDecl ';'
+    | importDecl ';'
     ;
 
-conditionExpr
-    : expression compareOp expression
+propertyDef
+    : IDENTIFIER ':' typeRef (':' value)? ';'
     ;
 
-operator
-    : '+' | '-' | '*' | '/'
+propertyAssign
+    : IDENTIFIER ':' value
     ;
 
-compareOp
-    : '>' | '<' | '>=' | '<=' | '==' | '!='
+logicBlockDef
+    : 'logic' IDENTIFIER '{' statement* '}'
     ;
 
-// Amount & Growth
-growthExpr
-    : 'fixed' '(' DECIMAL ')'
-    | 'distribution' '(' distributionType ',' paramList ')'
-    | 'randomWalk' '(' paramList ')'
-    | 'expression' '(' STRING ')'
+referenceDecl
+    : '$ref' ':' STRING
     ;
 
-paramList
-    : param (',' param)*
+importDecl
+    : 'import' STRING
     ;
 
-param
-    : IDENTIFIER '=' value
+// Type references (embedded enums or named types)
+//=====================================================================
+
+typeRef
+    : IDENTIFIER
     ;
 
-amountExpr
-    : 'fixed' '(' DECIMAL ')'
-    | 'loanPayment' '(' loanParamList ')'
-    ;
+//=====================================================================
+// Value Constructs
+//=====================================================================
 
-loanParamList
-    : 'principal' '=' DECIMAL ',' 'rate' '=' DECIMAL ',' 'termMonths' '=' INT
-    ;
-
-tagList
-    : '[' tagEnum (',' tagEnum)* ']'
-    ;
-
-// Dates & Durations
-dateLiteral
-    : 'Date' '(' INT ',' INT ',' INT ')'
-    ;
-
-durationLiteral
-    : 'duration' '(' 'years' '=' INT (',' 'months' '=' INT)? ')'
-    ;
-
-versionLiteral
-    : STRING
-    ;
-
-// Values
 value
-    : DECIMAL | INT | STRING
+    : NUMBER
+    | STRING
+    | BOOLEAN
+    | '[' value (',' value)* ']'            // arrays
+    | '{' propertyAssign (',' propertyAssign)* '}'  // inline objects
     ;
 
-YAML_PATH
-    : PATH_CHARS+ ('.' PATH_CHARS+)*
-    ;
-
-PATH_CHARS
-    : [a-zA-Z0-9_\/\-]
-    ;
-
-// Tokens
-STRING
-    : '"' (~["])* '"'
-    ;
-
-INT
-    : [0-9]+
-    ;
-
-DECIMAL
-    : INT '.' [0-9]+
-    ;
-
-CODE_BLOCK
-    : '|' ~[]*
-    ;
-
-NEWLINE
-    : '\r'? '\n'
-    ;
+//=====================================================================
+// Lexer Rules & Enums
+//=====================================================================
 
 IDENTIFIER
-    : [a-zA-Z_] [a-zA-Z0-9_]*
+    : [a-zA-Z_][a-zA-Z0-9_]*
     ;
 
+NUMBER
+    : '-'? [0-9]+ ('.' [0-9]+)?
+    ;
+
+STRING
+    : '"' (~["\\] | '\\' .)* '"'
+    ;
+
+BOOLEAN
+    : 'true'
+    | 'false'
+    ;
+
+// Embedded token enums
+
+DEAL_TYPE
+    : 'commercial_real_estate'
+    | 'residential_real_estate'
+    | 'financial_instrument'
+    | 'syndicated_loan'
+    | 'private_credit'
+    | 'litigation_finance'
+    | 'royalty_stream'
+    | 'infrastructure_project'
+    | 'renewable_energy_project'
+    | 'equipment_leasing'
+    | 'art_and_collectibles'
+    | 'business_acquisition'
+    | 'other'
+    ;
+
+ASSET_CATEGORY
+    : 'real_estate'
+    | 'financial_asset'
+    | 'physical_asset'
+    | 'legal_right'
+    | 'operating_entity'
+    | 'contract_bundle'
+    | 'mixed'
+    | 'other'
+    ;
+
+COMPONENT_SCOPE
+    : 'component'
+    | 'asset'
+    | 'deal'
+    | 'portfolio'
+    | 'fund'
+    ;
+
+ASSUMPTION_CATEGORY
+    : 'revenue'
+    | 'expense'
+    | 'capital'
+    | 'leasing'
+    | 'timing'
+    | 'financing'
+    | 'other'
+    ;
+
+DISTRIBUTION_TYPE
+    : 'normal'
+    | 'uniform'
+    | 'triangular'
+    | 'lognormal'
+    | 'beta'
+    | 'custom'
+    ;
+
+LOGIC_BLOCK_TYPE
+    : 'calculation'
+    | 'aggregation'
+    | 'validation'
+    | 'trigger'
+    | 'generator'
+    | 'custom'
+    ;
+
+METRIC_TYPE
+    : 'npv'
+    | 'irr'
+    | 'moic'
+    | 'dscr'
+    | 'payback'
+    | 'enpv'
+    | 'eirr'
+    ;
+
+FREQUENCY
+    : 'daily'
+    | 'weekly'
+    | 'monthly'
+    | 'quarterly'
+    | 'annual'
+    ;
+
+BUSINESS_DAY_CONVENTION
+    : 'following'
+    | 'modified_following'
+    | 'preceding'
+    ;
+
+DAY_COUNT
+    : 'actual/360'
+    | 'actual/365'
+    | '30/360'
+    | 'actual/actual'
+    ;
+
+PARTY_ROLE
+    : 'sponsor'
+    | 'equity'
+    | 'lender'
+    | 'operator'
+    | 'guarantor'
+    | 'other'
+    ;
+
+// Stream-related enums
+STREAM_CATEGORY
+    : 'Revenue'
+    | 'Expense'
+    | 'OtherIncome'
+    ;
+
+STREAM_SUB_TYPE
+    : 'Operating'
+    | 'Financing'
+    | 'Tax'
+    | 'CapEx'
+    | 'Fee'
+    | 'Other'
+    ;
+
+AMOUNT_TYPE
+    : 'fixed'
+    | 'expression'
+    | 'distribution'
+    | 'randomWalk'
+    ;
+
+// Assumption-related enums  
+ASSUMPTION_TYPE
+    : 'fixed'
+    | 'distribution'
+    | 'table'
+    | 'expression'
+    ;
+
+// Schedule-related enums
+SCHEDULE_TYPE
+    : 'oneTime'
+    | 'recurring'
+    | 'dateBounded'
+    ;
+
+// Entity-specific enums
+ASSET_STATE
+    : 'pre_operational'
+    | 'operational'
+    | 'non_operational'
+    | 'disposed'
+    ;
+
+FUND_PARTICIPANT_ROLE
+    : 'general_partner'
+    | 'limited_partner'
+    | 'advisor'
+    | 'other'
+    ;
+
+TEMPLATE_TYPE
+    : 'deal'
+    | 'asset'
+    | 'component'
+    | 'stream'
+    | 'logic-block'
+    | 'rule-block'
+    | 'assumption'
+    | 'view'
+    | 'scenario'
+    | 'contract'
+    | 'waterfall'
+    ;
+
+PARAMETER_DATA_TYPE
+    : 'string'
+    | 'number'
+    | 'date'
+    | 'boolean'
+    | 'enum'
+    ;
+
+// Temporal-related enums
+RECURRENCE_FREQUENCY
+    : 'DAILY'
+    | 'WEEKLY'
+    | 'MONTHLY'
+    | 'YEARLY'
+    ;
+
+WEEKDAY
+    : 'MO'
+    | 'TU'
+    | 'WE'
+    | 'TH'
+    | 'FR'
+    | 'SA'
+    | 'SU'
+    ;
+
+TRIGGER_OPERATOR
+    : 'eq'
+    | 'ne'
+    | 'lt'
+    | 'lte'
+    | 'gt'
+    | 'gte'
+    ;
+
+// Market data enums
+DATA_SOURCE_TYPE
+    : 'api'
+    | 'database'
+    | 'file'
+    | 'service'
+    ;
+
+// Metric result enums
+PAYBACK_UNIT
+    : 'period'
+    | 'year'
+    ;
+
+//=====================================================================
+// Whitespace & Comments
+//=====================================================================
+
 WS
-    : [ \t]+ -> skip
+    : [ \t\r\n]+ -> skip
+    ;
+
+LINE_COMMENT
+    : '//' ~[\r\n]* -> skip
+    ;
+
+BLOCK_COMMENT
+    : '/*' .*? '*/' -> skip
     ;
