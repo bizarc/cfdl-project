@@ -1,4 +1,4 @@
-grammar CFDL;
+grammar cfdl;
 
 @header {
   package dev.cfdl.parser;
@@ -369,7 +369,7 @@ DEAL_TYPE
     | 'equipment_leasing'
     | 'art_and_collectibles'
     | 'business_acquisition'
-    | 'other'
+    | 'deal_other'
     ;
 
 ASSET_CATEGORY
@@ -380,7 +380,7 @@ ASSET_CATEGORY
     | 'operating_entity'
     | 'contract_bundle'
     | 'mixed'
-    | 'other'
+    | 'asset_other'
     ;
 
 COMPONENT_SCOPE
@@ -398,7 +398,7 @@ ASSUMPTION_CATEGORY
     | 'leasing'
     | 'timing'
     | 'financing'
-    | 'other'
+    | 'assumption_other'
     ;
 
 DISTRIBUTION_TYPE
@@ -407,7 +407,7 @@ DISTRIBUTION_TYPE
     | 'triangular'
     | 'lognormal'
     | 'beta'
-    | 'custom'
+    | 'dist_custom'
     ;
 
 LOGIC_BLOCK_TYPE
@@ -416,7 +416,7 @@ LOGIC_BLOCK_TYPE
     | 'validation'
     | 'trigger'
     | 'generator'
-    | 'custom'
+    | 'logic_custom'
     ;
 
 METRIC_TYPE
@@ -456,7 +456,7 @@ PARTY_ROLE
     | 'lender'
     | 'operator'
     | 'guarantor'
-    | 'other'
+    | 'party_other'
     ;
 
 // Stream-related enums
@@ -476,18 +476,18 @@ STREAM_SUB_TYPE
     ;
 
 AMOUNT_TYPE
-    : 'fixed'
-    | 'expression'
-    | 'distribution'
+    : 'amount_fixed'
+    | 'amount_expression'
+    | 'amount_distribution'
     | 'randomWalk'
     ;
 
 // Assumption-related enums  
 ASSUMPTION_TYPE
-    : 'fixed'
-    | 'distribution'
+    : 'assumption_fixed'
+    | 'assumption_distribution'
     | 'table'
-    | 'expression'
+    | 'assumption_expression'
     ;
 
 // Schedule-related enums
@@ -509,13 +509,13 @@ FUND_PARTICIPANT_ROLE
     : 'general_partner'
     | 'limited_partner'
     | 'advisor'
-    | 'other'
+    | 'fund_other'
     ;
 
 TEMPLATE_TYPE
-    : 'deal'
-    | 'asset'
-    | 'component'
+    : 'template_deal'
+    | 'template_asset'
+    | 'template_component'
     | 'stream'
     | 'logic-block'
     | 'rule-block'

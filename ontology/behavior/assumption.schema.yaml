@@ -16,24 +16,40 @@ properties:
   category:
     type: string
     description: "Logical grouping used for organizing assumptions in reports, sensitivity analysis, and user interfaces."
-    enum: [revenue, expense, capital, leasing, timing, financing, other] :contentReference[oaicite:14]{index=14}
+    enum:
+      - revenue
+      - expense
+      - capital
+      - leasing
+      - timing
+      - financing
+      - other
 
   scope:
     type: string
     description: "Level in the CFDL hierarchy where this assumption is defined and applies."
-    enum: [component, asset, deal, portfolio, fund] :contentReference[oaicite:15]{index=15}
+    enum:
+      - component
+      - asset
+      - deal
+      - portfolio
+      - fund
 
   type:
     type: string
     description: "Method by which the value is defined and how it should be evaluated."
-    enum: [fixed, distribution, table, expression] :contentReference[oaicite:16]{index=16}
+    enum:
+      - fixed
+      - distribution
+      - table
+      - expression
 
   value:
     description: "Base value for fixed, table, or expression type assumptions."
     oneOf:
       - type: number
       - type: string
-      - type: object :contentReference[oaicite:17]{index=17}
+      - type: object
 
   distribution:
     type: object
@@ -41,13 +57,21 @@ properties:
     properties:
       type:
         type: string
-        enum: [normal, uniform, triangular, lognormal, beta, custom]
-        description: "Type of probability distribution to use for sampling values." :contentReference[oaicite:18]{index=18}
+        enum:
+          - normal
+          - uniform
+          - triangular
+          - lognormal
+          - beta
+          - custom
+        description: "Type of probability distribution to use for sampling values."
       parameters:
         type: object
         description: "Distribution-specific parameters that define the shape and characteristics of the distribution."
         additionalProperties: true
-    required: [type, parameters]
+    required:
+      - type
+      - parameters
 
   timeSeries:
     type: array
@@ -58,35 +82,37 @@ properties:
         date:
           type: string
           format: date
-          description: "The date when this override takes effect."  
+          description: "The date when this override takes effect."
         value:
           description: "The override value that applies on or after the given date."
           oneOf:
             - type: number
             - type: string
             - type: object
-      required: [date, value] :contentReference[oaicite:19]{index=19}
+      required:
+        - date
+        - value
 
   unit:
     type: string
-    description: "Optional unit specification (e.g. '%', 'bps', '$/sf')." :contentReference[oaicite:20]{index=20}
+    description: "Optional unit specification (e.g. '%', 'bps', '$/sf')."
 
   template:
     type: string
-    description: "Optional reference to a reusable assumption template." :contentReference[oaicite:21]{index=21}
+    description: "Optional reference to a reusable assumption template."
 
   overrides:
     type: object
-    description: "Field-level overrides when using a referenced template, allowing customization."  
-    additionalProperties: true :contentReference[oaicite:22]{index=22}
+    description: "Field-level overrides when using a referenced template, allowing customization."
+    additionalProperties: true
 
   source:
     type: string
-    description: "Optional reference to the data source or authority for the assumption value." :contentReference[oaicite:23]{index=23}
+    description: "Optional reference to the data source or authority for the assumption value."
 
   marketDataRef:
     type: string
-    description: "Optional reference to a market data entity for dynamic updates." :contentReference[oaicite:24]{index=24}
+    description: "Optional reference to a market data entity for dynamic updates."
 
   metadata:
     type: object
@@ -98,3 +124,4 @@ required:
   - category
   - scope
   - type
+  
