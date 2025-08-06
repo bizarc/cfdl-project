@@ -230,28 +230,129 @@ end
 """
     execute_waterfall_distribution(cash_flows::Dict{String, Any}, ir_data::IRData) -> Union{Dict{String, Any}, Nothing}
 
-Execute waterfall distribution logic (placeholder implementation).
+Execute waterfall distribution logic using the available cash from the cash flow pipeline.
 """
 function execute_waterfall_distribution(cash_flows::Dict{String, Any}, ir_data::IRData)::Union{Dict{String, Any}, Nothing}
     if ir_data.waterfall === nothing
         return nothing
     end
     
-    # TODO: Implement waterfall distribution
-    @debug "Executing waterfall distribution (placeholder)"
+    @debug "Executing waterfall distribution"
     
-    # Placeholder implementation
+    # Extract available cash calculations from cash flow results
+    cash_flow_result = get(cash_flows, "cash_flow_result", nothing)
+    if cash_flow_result === nothing
+        @warn "No cash flow result found for waterfall distribution"
+        return nothing
+    end
+    
+    # Convert aggregated cash flows to available cash calculations
+    # This is a simplified conversion - in practice, we'd extract from the 7-stage pipeline
+    available_cash_results = convert_to_available_cash_calculations(cash_flow_result)
+    
+    # Execute waterfall distribution
+    distributions = execute_waterfall_distribution(available_cash_results, ir_data)
+    
+    if isempty(distributions)
+        return nothing
+    end
+    
+    # Convert to output format
     return Dict{String, Any}(
-        "total_distributed" => 1000000.0,
-        "tiers" => [
-            Dict(
-                "tier_id" => "preferred_return",
-                "amount_distributed" => 80000.0,
-                "recipients" => [
-                    Dict("party_id" => "equity_sponsor", "amount" => 80000.0)
-                ]
-            )
-        ]
+        "waterfall_id" => get(ir_data.waterfall, "id", "default"),
+        "total_periods" => length(distributions),
+        "distributions" => [convert_distribution_to_dict(d) for d in distributions],
+        "summary" => summarize_waterfall_distribution(distributions)
+    )
+end
+
+"""
+    convert_to_available_cash_calculations(cash_flow_result) -> Vector{AvailableCashCalculation}
+
+Convert cash flow aggregation results to available cash calculations for waterfall processing.
+"""
+function convert_to_available_cash_calculations(cash_flow_result)::Vector{AvailableCashCalculation}
+    available_cash_results = Vector{AvailableCashCalculation}()
+    
+    # Extract from monthly view (primary source for distributions)
+    monthly_view = get(cash_flow_result, "monthly_view", [])
+    
+    for (idx, period_data) in enumerate(monthly_view)
+        # Extract available cash from levered cash flow
+        # In the full pipeline, this would come from Stage 6 (Available Cash Calculation)
+        levered_cf = get(period_data, "levered_cf", 0.0)
+        available_for_distribution = max(levered_cf, 0.0)  # Only distribute positive cash flows
+        
+        period_start = get(period_data, "period_start", Date(2024, 1, 1))
+        period_end = get(period_data, "period_end", Date(2024, 1, 31))
+        
+        push!(available_cash_results, AvailableCashCalculation(
+            "deal_entity_$idx",
+            period_start,
+            period_end,
+            levered_cf,  # after_tax_cf
+            0.0,         # capital_reserves
+            0.0,         # working_capital_change
+            0.0,         # other_adjustments
+            available_for_distribution,
+            Dict{String, Any}("source" => "monte_carlo_conversion")
+        ))
+    end
+    
+    return available_cash_results
+end
+
+"""
+    convert_distribution_to_dict(distribution::WaterfallDistribution) -> Dict{String, Any}
+
+Convert WaterfallDistribution struct to dictionary for JSON serialization.
+"""
+function convert_distribution_to_dict(distribution::WaterfallDistribution)::Dict{String, Any}
+    return Dict{String, Any}(
+        "entity_id" => distribution.entity_id,
+        "waterfall_id" => distribution.waterfall_id,
+        "period_start" => distribution.period_start,
+        "period_end" => distribution.period_end,
+        "total_available" => distribution.total_available,
+        "total_distributed" => distribution.total_distributed,
+        "remaining_cash" => distribution.remaining_cash,
+        "tiers" => [convert_tier_to_dict(tier) for tier in distribution.tier_distributions],
+        "capital_stack" => distribution.capital_stack_data,
+        "metadata" => distribution.metadata
+    )
+end
+
+"""
+    convert_tier_to_dict(tier::TierDistribution) -> Dict{String, Any}
+
+Convert TierDistribution struct to dictionary.
+"""
+function convert_tier_to_dict(tier::TierDistribution)::Dict{String, Any}
+    return Dict{String, Any}(
+        "tier_id" => tier.tier_id,
+        "description" => tier.tier_description,
+        "condition_type" => tier.condition_type,
+        "condition_value" => tier.condition_value,
+        "condition_met" => tier.condition_met,
+        "cash_available" => tier.cash_available_to_tier,
+        "cash_allocated" => tier.cash_allocated,
+        "recipients" => [convert_recipient_to_dict(r) for r in tier.recipient_distributions],
+        "metadata" => tier.metadata
+    )
+end
+
+"""
+    convert_recipient_to_dict(recipient::RecipientDistribution) -> Dict{String, Any}
+
+Convert RecipientDistribution struct to dictionary.
+"""
+function convert_recipient_to_dict(recipient::RecipientDistribution)::Dict{String, Any}
+    return Dict{String, Any}(
+        "recipient_id" => recipient.recipient_id,
+        "recipient_type" => recipient.recipient_type,
+        "amount" => recipient.amount,
+        "percentage" => recipient.percentage_of_tier,
+        "metadata" => recipient.metadata
     )
 end
 

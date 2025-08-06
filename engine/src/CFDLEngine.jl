@@ -60,6 +60,9 @@ include("statement_views.jl")
 # Include main aggregator (uses the modular stages)
 include("cash_flow_aggregator.jl")
 
+# Include waterfall distribution library (needed by monte_carlo.jl)
+include("waterfall_distributor.jl")
+
 # Include analysis modules
 include("monte_carlo.jl")
 include("sampling.jl")
@@ -75,5 +78,9 @@ export MetricResult, calculate_npv, calculate_irr, calculate_dscr, calculate_moi
 
 # Export stochastic analysis functions
 export DistributionStats, StochasticMetricsResult, analyze_distribution, calculate_risk_metrics, analyze_stochastic_metrics, generate_distribution_summary, compare_distributions
+
+# Export waterfall distribution functions
+export WaterfallDistribution, TierDistribution, RecipientDistribution
+export execute_waterfall_distribution, summarize_waterfall_distribution, validate_waterfall_distribution
 
 end # module CFDLEngine

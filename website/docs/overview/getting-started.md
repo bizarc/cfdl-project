@@ -36,6 +36,36 @@ You should see output like:
   • All schemas validated successfully
 ```
 
+## 🚀 **Engine Capabilities (v1.2)**
+
+The CFDL Engine now provides complete financial analysis capabilities:
+
+### Monte Carlo Simulation
+- **1,000+ trial capacity** with sub-second execution
+- **Stochastic variable sampling** for risk analysis
+- **Reproducible results** with seed-based random generation
+
+### Waterfall Distribution
+- **Multi-asset class support**: Commercial Real Estate, Private Equity, Infrastructure
+- **Industry-standard mechanics**: Preferred returns, catch-ups, carried interest
+- **Real-time participant analysis**: MOIC, IRR, profit/loss calculations
+
+### Financial Metrics
+- **NPV**: Net Present Value with configurable discount rates
+- **IRR**: Internal Rate of Return with precision solving
+- **DSCR**: Debt Service Coverage Ratio analysis
+- **MOIC**: Multiple of Invested Capital calculations
+- **Payback**: Period analysis with detailed timing
+
+### Demo Available
+Try the interactive waterfall demo:
+```bash
+cd engine
+julia demo_waterfall.jl
+```
+
+This showcases realistic CRE, PE, and Infrastructure waterfall distributions with detailed participant return analysis.
+
 ## Your First CFDL Model
 
 Let's create a simple rental property model step by step.

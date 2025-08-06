@@ -24,4 +24,7 @@ using Test
     
     # Test stochastic analysis library
     include("test_stochastic_analysis.jl")
+    
+    # Test waterfall distribution library
+    include("test_waterfall_distributor.jl")
 end
